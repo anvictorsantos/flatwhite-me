@@ -320,7 +320,6 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
           setFiltersOpen(false)
         }}
       />
-
     </main>
   )
 }
