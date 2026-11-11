@@ -6,4 +6,7 @@ export default defineConfig({
   resolve: {
     alias: { '@': root },
   },
+  test: {
+    exclude: ['tests/e2e/**', 'node_modules/**'],
+  },
 })
