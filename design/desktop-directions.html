@@ -1,0 +1,1818 @@
+<title>Desktop Flat White Me</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --board-bg: #171310;
+    --board-surface: #211b16;
+    --board-line: #372d25;
+    --board-text: #f3ede5;
+    --board-muted: #a2968a;
+    --board-accent: #cf6a3d;
+
+    --app-bg: #faf7f2;
+    --app-surface: #ffffff;
+    --app-muted: #f1eae0;
+    --app-ink: #241a14;
+    --app-ink-2: #6b5b50;
+    --app-line: #e3d9cc;
+    --terra: #b4532a;
+    --terra-text: #9c431f;
+    --success: #2f6b4f;
+    --badge: #f7e7da;
+
+    --font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    background: var(--board-bg);
+    color: var(--board-text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--board-bg);
+    z-index: 60;
+  }
+
+  .board { max-width: 1240px; margin: 0 auto; }
+
+  .head { padding: 52px 0 0; }
+
+  .wordmark {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .wordmark i { width: 9px; height: 9px; border-radius: 2px; background: var(--board-accent); display: block; }
+
+  .kicker { margin: 22px 0 0; font-size: 12px; color: var(--board-muted); }
+
+  h1 {
+    margin: 10px 0 0;
+    font-size: clamp(30px, 4.6vw, 46px);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    max-width: 20ch;
+  }
+
+  .intro {
+    margin: 16px 0 0;
+    max-width: 68ch;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--board-muted);
+  }
+
+  .directions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 32px;
+    background: var(--board-line);
+    border: 1px solid var(--board-line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .direction { background: var(--board-surface); padding: 16px; min-width: 0; }
+  .direction-top { display: flex; align-items: baseline; gap: 8px; }
+  .letter { font-size: 11px; font-weight: 600; color: var(--board-accent); font-variant-numeric: tabular-nums; }
+  .direction h2 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .direction p { margin: 7px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--board-muted); }
+
+  .section { padding: 40px 0 8px; border-top: 1px solid var(--board-line); margin-top: 40px; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 20px; }
+  .sec-head h2 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+  .sec-head p { margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--board-muted); max-width: 56ch; }
+
+  .phones {
+    display: grid;
+    grid-template-columns: repeat(3, 340px);
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 34px;
+  }
+
+  .stack > * { min-width: 0; }
+  .frame-scroll { overflow-x: auto; padding-bottom: 6px; max-width: 100%; min-width: 0; }
+  .frame-scroll::-webkit-scrollbar { height: 8px; }
+  .frame-scroll::-webkit-scrollbar-thumb { background: var(--board-line); border-radius: 4px; }
+
+  .frame-label { display: flex; align-items: baseline; gap: 9px; margin: 0 0 8px; font-size: 12px; color: var(--board-muted); }
+  .frame-label b { color: var(--board-accent); font-weight: 600; }
+  .frame-label h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--board-text); }
+  .stack { display: grid; gap: 26px; }
+
+  .d-frame {
+    width: 1100px;
+    height: 720px;
+    background: var(--app-bg);
+    color: var(--app-ink);
+    border: 1px solid #3b3129;
+    border-radius: 10px;
+    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.45;
+    position: relative;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+  }
+
+  .fade-b {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 46px;
+    background: linear-gradient(to bottom, rgba(250, 247, 242, 0), var(--app-bg));
+    pointer-events: none;
+  }
+
+  /* Shared desktop pieces */
+  .badge {
+    display: inline-flex; align-items: baseline; gap: 4px;
+    background: var(--badge); color: var(--terra-text);
+    border-radius: 999px; padding: 4px 11px;
+    font-size: 19px; font-weight: 600; line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .badge small { font-size: 10px; font-weight: 500; }
+  .badge.lg { font-size: 30px; padding: 6px 15px; }
+  .badge.xl { font-size: 44px; padding: 8px 20px; border-radius: 999px; }
+
+  .sample { font-size: 12px; color: var(--app-ink-2); }
+  .tag { display: inline-block; border: 1px solid var(--app-line); border-radius: 999px; padding: 2px 8px; font-size: 11px; color: var(--app-ink-2); }
+
+  .progress { height: 6px; border-radius: 999px; background: var(--app-muted); overflow: hidden; }
+  .progress i { display: block; height: 100%; border-radius: 999px; background: var(--terra); }
+  .progress.sm { height: 4px; }
+
+  .pin {
+    position: absolute; transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 999px; background: var(--terra); color: #fff;
+    font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums;
+    width: 28px; height: 28px;
+  }
+  .pin.sel { width: 38px; height: 38px; background: var(--app-ink); border: 3px solid var(--app-surface); font-size: 11px; }
+  .pin.raw { width: 11px; height: 11px; background: var(--app-surface); border: 2px solid var(--terra); }
+
+  .map-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* A — Mesa */
+  .ms { display: grid; grid-template-columns: 232px minmax(0, 1fr); height: 100%; }
+  .ms-side { background: var(--app-surface); border-right: 1px solid var(--app-line); padding: 18px 14px; display: flex; flex-direction: column; }
+  .ms-logo { display: flex; align-items: center; gap: 8px; padding: 4px 8px 24px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .ms-logo i { width: 10px; height: 10px; border-radius: 3px; background: var(--terra); display: block; }
+  .ms-nav { display: grid; gap: 2px; }
+  .ms-row { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 10px; border-radius: 9px; color: var(--app-ink-2); font-size: 13px; font-weight: 500; }
+  .ms-row.on { background: var(--app-muted); color: var(--terra-text); }
+  .ms-ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .ms-foot { margin-top: auto; display: grid; gap: 8px; }
+  .ms-city { display: inline-block; justify-self: start; background: var(--app-muted); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: var(--app-ink-2); }
+  .ms-user { border-top: 1px solid var(--app-line); padding-top: 10px; font-size: 12px; color: var(--app-ink-2); }
+  .ms-main { padding: 26px 30px; overflow: hidden; position: relative; }
+  .ms-h1 { margin: 0; font-size: 32px; line-height: 1.08; letter-spacing: -0.03em; font-weight: 600; max-width: 22ch; text-wrap: balance; }
+  .ms-lede { margin: 7px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--app-ink-2); max-width: 64ch; }
+  .ms-toolbar { display: flex; gap: 8px; margin-top: 16px; align-items: center; }
+  .ms-search { flex: 1; display: flex; align-items: center; gap: 8px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 10px; padding: 9px 12px; font-size: 13px; color: var(--app-ink-2); }
+  .ms-btn { height: 38px; padding: 0 15px; border-radius: 10px; display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; }
+  .ms-btn.primary { background: var(--terra); color: #fff; }
+  .ms-btn.ghost { background: var(--app-surface); border: 1px solid var(--app-line); color: var(--app-ink); }
+  .ms-chips { display: flex; gap: 8px; margin-top: 10px; }
+  .ms-chip { border: 1px solid var(--app-line); background: var(--app-surface); border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 500; color: var(--app-ink); }
+  .ms-chip.on { background: var(--terra); border-color: var(--terra); color: #fff; }
+  .ms-cols { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 22px; margin-top: 18px; }
+  .ms-sechead { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--app-ink); padding-top: 8px; font-size: 12px; font-weight: 600; }
+  .ms-sechead span:last-child { font-size: 11px; font-weight: 400; color: var(--app-ink-2); }
+  .ms-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .ms-card { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 16px; padding: 14px; display: grid; gap: 9px; }
+  .ms-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .ms-name { font-size: 15px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; }
+  .ms-area { font-size: 11.5px; color: var(--app-ink-2); margin-top: 2px; }
+  .ms-heart { width: 32px; height: 32px; border-radius: 9px; background: var(--app-muted); display: grid; place-items: center; color: var(--app-ink-2); font-size: 14px; }
+  .ms-card .badge { font-size: 18px; padding: 3px 10px; }
+  .ms-cardline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .ms-price { font-size: 12px; color: var(--app-ink-2); }
+  .ms-cardbtn { height: 34px; border: 1px solid var(--app-line); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .ms-rail { display: grid; gap: 12px; align-content: start; }
+  .ms-map { height: 250px; border-radius: 16px; border: 1px solid var(--app-line); overflow: hidden; position: relative; background: #ede5d8; }
+  .ms-mapnote { position: absolute; left: 9px; bottom: 9px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 500; }
+  .ms-unrated { background: var(--app-muted); border-radius: 12px; padding: 12px; font-size: 12px; color: var(--app-ink-2); }
+  .ms-unrated b { display: block; color: var(--app-ink); font-weight: 600; margin-bottom: 3px; }
+
+  .ms-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+  .ms-stat { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px 14px; }
+  .ms-stat b { display: block; font-size: 24px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .ms-stat span { font-size: 11.5px; color: var(--app-ink-2); }
+  .ms-freg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .ms-fregcard { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 7px; }
+  .ms-fregtop { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+  .ms-fregname { font-size: 12.5px; font-weight: 600; line-height: 1.25; }
+  .ms-fregdone { font-size: 10.5px; font-weight: 600; color: var(--terra-text); }
+  .ms-fregmeta { font-size: 10.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+
+  /* B — Montra */
+  .ed { height: 100%; display: flex; flex-direction: column; }
+  .ed-top { height: 64px; flex: none; display: flex; align-items: center; gap: 28px; padding: 0 40px; border-bottom: 1px solid var(--app-line); }
+  .ed-logo { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+  .ed-logo i { width: 9px; height: 9px; border-radius: 2px; background: var(--terra); display: block; }
+  .ed-links { display: flex; gap: 20px; font-size: 12.5px; font-weight: 500; color: var(--app-ink-2); }
+  .ed-links .on { color: var(--app-ink); font-weight: 600; }
+  .ed-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+  .ed-pill { background: var(--app-muted); border-radius: 999px; padding: 5px 11px; font-size: 12px; color: var(--app-ink-2); }
+  .ed-main { padding: 30px 40px; overflow: hidden; flex: 1; position: relative; }
+  .ed-h1 { margin: 0; font-size: 42px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 600; max-width: 17ch; text-wrap: balance; }
+  .ed-lede { margin: 9px 0 0; font-size: 14px; line-height: 1.55; color: var(--app-ink-2); max-width: 48ch; }
+  .ed-split { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 44px; margin-top: 22px; }
+  .ed-search { display: flex; align-items: center; gap: 9px; border: 1px solid var(--app-line); background: var(--app-surface); border-radius: 10px; padding: 10px 13px; font-size: 13px; color: var(--app-ink-2); }
+  .ed-chiprow { display: flex; gap: 8px; margin-top: 10px; }
+  .ed-table { margin-top: 16px; }
+  .ed-tr { display: grid; grid-template-columns: 26px minmax(0, 1fr) 60px 54px; gap: 12px; align-items: baseline; padding: 9px 0; border-bottom: 1px solid var(--app-line); }
+  .ed-rank { font-size: 11px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .ed-rank.top { color: var(--terra-text); font-weight: 600; }
+  .ed-name { font-size: 14px; font-weight: 500; line-height: 1.2; }
+  .ed-area { font-size: 11px; color: var(--app-ink-2); margin-top: 2px; }
+  .ed-score { font-size: 20px; font-weight: 600; text-align: right; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .ed-n { font-size: 11px; color: var(--app-ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+  .ed-mapcard { height: 236px; border-radius: 16px; border: 1px solid var(--app-line); overflow: hidden; position: relative; background: #ede5d8; }
+  .ed-feature { margin-top: 12px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 16px; padding: 14px; display: grid; gap: 9px; }
+  .ed-feature-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .ed-actions { display: flex; gap: 8px; margin-top: 2px; }
+
+  .ed-stats { display: flex; gap: 28px; margin-top: 18px; border-top: 1px solid var(--app-ink); border-bottom: 1px solid var(--app-line); padding: 12px 0; }
+  .ed-stat b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .ed-stat span { font-size: 11.5px; color: var(--app-ink-2); }
+  .ed-freg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+  .ed-fregcard { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 7px; }
+  .ed-fregtop { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+  .ed-fregname { font-size: 12px; font-weight: 600; line-height: 1.25; }
+  .ed-pct { font-size: 20px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .ed-pct.done { color: var(--terra-text); }
+  .ed-fregmeta { font-size: 10.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+
+  /* C — Atlas */
+  .at { display: grid; grid-template-columns: 208px minmax(0, 1fr); height: 100%; }
+  .at-side { background: var(--app-surface); border-right: 1px solid var(--app-line); padding: 16px 12px; display: flex; flex-direction: column; }
+  .at-logo { display: flex; align-items: center; gap: 8px; padding: 4px 8px 20px; font-size: 14px; font-weight: 600; }
+  .at-logo i { width: 9px; height: 9px; border-radius: 2px; background: var(--terra); }
+  .at-nav { display: grid; gap: 2px; }
+  .at-row { display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 9px; border-radius: 8px; font-size: 12.5px; color: var(--app-ink-2); font-weight: 500; }
+  .at-row.on { background: var(--app-muted); color: var(--terra-text); }
+  .at-foot { margin-top: auto; }
+  .at-wrap { display: flex; flex-direction: column; min-width: 0; }
+  .at-top { height: 54px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 22px; border-bottom: 1px solid var(--app-line); }
+  .at-title { font-size: 13px; font-weight: 600; }
+  .at-topright { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--app-ink-2); }
+  .at-main { padding: 16px 20px 20px; flex: 1; min-height: 0; overflow: hidden; }
+  .at-split { display: grid; grid-template-columns: minmax(0, 1fr) 430px; gap: 16px; height: 100%; }
+  .at-split.rev { grid-template-columns: 400px minmax(0, 1fr); }
+  .at-map { position: relative; height: 100%; border-radius: 16px; overflow: hidden; border: 1px solid var(--app-line); background: #ede5d8; }
+  .at-map-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .at-overlay { position: absolute; left: 10px; right: 10px; bottom: 10px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 12px; padding: 12px; display: grid; gap: 9px; box-shadow: 0 6px 18px rgba(36, 26, 20, 0.14); }
+  .at-overlay-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .at-name { font-size: 15px; font-weight: 600; letter-spacing: -0.015em; }
+  .at-area { font-size: 11.5px; color: var(--app-ink-2); margin-top: 2px; }
+  .at-panel { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 16px; padding: 14px; display: grid; gap: 10px; align-content: start; }
+  .at-h1 { margin: 0; font-size: 25px; line-height: 1.1; letter-spacing: -0.028em; font-weight: 600; }
+  .at-lede { margin: 4px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--app-ink-2); }
+  .at-search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--app-line); background: var(--app-surface); border-radius: 9px; padding: 8px 10px; font-size: 12px; color: var(--app-ink-2); }
+  .at-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .at-chip { border: 1px solid var(--app-line); background: var(--app-surface); border-radius: 999px; padding: 5px 10px; font-size: 11px; font-weight: 500; }
+  .at-list { display: grid; }
+  .at-lrow { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 9px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--app-line); }
+  .at-lrank { font-size: 10.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .at-lname { font-size: 13px; font-weight: 500; line-height: 1.2; }
+  .at-larea { font-size: 10.5px; color: var(--app-ink-2); }
+  .at-lscore { text-align: right; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .at-ln { text-align: right; font-size: 10px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .at-legend { display: flex; align-items: center; gap: 10px; font-size: 10.5px; color: var(--app-ink-2); }
+  .at-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .at-freglist { display: grid; }
+  .at-frow { display: grid; grid-template-columns: minmax(0, 1fr) 70px 38px; gap: 9px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--app-line); }
+  .at-fname { font-size: 11.5px; font-weight: 500; }
+  .at-fmeta { font-size: 10px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .at-fpct { font-size: 11px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Café pieces */
+  .cafe-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+  .ms-dim { display: grid; gap: 4px; }
+  .ms-dimtop { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 12.5px; }
+  .ms-dimtop b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ms-dims { display: grid; gap: 10px; margin-top: 8px; }
+  .ms-note { background: var(--app-muted); border-radius: 12px; padding: 11px; }
+  .ms-note p { margin: 0; font-size: 12.5px; line-height: 1.5; }
+  .ms-notemeta { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 10.5px; color: var(--app-ink-2); }
+  .ms-avatar { width: 22px; height: 22px; border-radius: 999px; background: var(--app-surface); display: grid; place-items: center; font-size: 9.5px; font-weight: 600; color: var(--terra-text); }
+  .ms-facts { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ms-fact { background: var(--app-muted); border-radius: 7px; padding: 5px 8px; font-size: 11px; color: var(--app-ink-2); }
+  .ms-fact b { color: var(--app-ink); font-weight: 600; }
+  .ms-note-list { display: grid; gap: 8px; margin-top: 8px; }
+
+  .ed-cafe-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; margin-top: 26px; }
+  .ed-giant { font-size: 96px; line-height: 0.88; font-weight: 600; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; }
+  .ed-giant small { font-size: 22px; color: var(--app-ink-2); font-weight: 500; letter-spacing: 0; margin-left: 6px; }
+  .ed-scorehero { border-left: 1px solid var(--app-line); padding-left: 34px; align-self: start; }
+  .ed-scorehero .sample { margin-top: 10px; }
+  .ed-scoreline { margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--success); }
+  .ed-dimtable { margin-top: 18px; }
+  .ed-dimrow { display: grid; grid-template-columns: 150px minmax(0, 1fr) 52px; gap: 14px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--app-line); }
+  .ed-dimrow span { font-size: 12px; }
+  .ed-dimrow b { font-size: 12px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ed-factrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .ed-note { background: var(--app-muted); border-radius: 12px; padding: 12px; }
+  .ed-note p { margin: 0; font-size: 12.5px; line-height: 1.5; }
+  .ed-note .ms-notemeta { margin-top: 8px; }
+
+  .at-col { display: grid; gap: 12px; align-content: start; height: 100%; min-height: 0; }
+  .at-scorerow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .at-scorerow .sample { font-size: 11.5px; }
+  .at-dimgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 6px; }
+  .at-dim { display: grid; gap: 4px; }
+  .at-dimtop { display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; }
+  .at-dimtop b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .at-notes { display: grid; gap: 8px; margin-top: 6px; }
+
+  /* Map pages */
+  .ed-mapstage { position: relative; height: 476px; border-radius: 16px; overflow: hidden; border: 1px solid var(--app-line); background: #ede5d8; }
+  .ed-float { position: absolute; left: 14px; top: 14px; width: 304px; display: grid; gap: 8px; }
+  .ed-float .ed-search { background: var(--app-surface); box-shadow: 0 4px 14px rgba(36, 26, 20, 0.12); }
+  .ed-float .ms-chip { background: var(--app-surface); box-shadow: 0 2px 8px rgba(36, 26, 20, 0.1); }
+  .ed-float .ms-chip.on { background: var(--terra); color: #fff; }
+  .ed-mapcard2 { position: absolute; left: 14px; bottom: 14px; width: 304px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 9px; box-shadow: 0 6px 18px rgba(36, 26, 20, 0.14); }
+  .at-mapstage { position: relative; height: 100%; border-radius: 16px; overflow: hidden; border: 1px solid var(--app-line); background: #ede5d8; }
+  .at-float { position: absolute; left: 12px; top: 12px; width: 326px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; box-shadow: 0 6px 18px rgba(36, 26, 20, 0.14); }
+  .at-mapstage .at-overlay { left: auto; right: 12px; bottom: 12px; width: 300px; }
+
+  /* Ranking pages */
+  .ms-podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: end; max-width: 660px; margin-top: 10px; }
+  .ms-pod { border: 1px solid var(--app-line); border-radius: 14px; background: var(--app-surface); padding: 12px; display: grid; gap: 4px; }
+  .ms-pod.first { background: var(--badge); border-color: #e6c6ab; padding: 16px 12px 14px; }
+  .ms-podrank { font-size: 10.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .ms-podname { font-size: 12.5px; font-weight: 600; line-height: 1.2; }
+  .ms-podscore { font-size: 24px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .ms-podscore small { font-size: 10px; color: var(--app-ink-2); font-weight: 500; letter-spacing: 0; }
+  .ms-podn { font-size: 10.5px; color: var(--app-ink-2); }
+  .ms-rankcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+  .ms-rankcard { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 6px; }
+  .ms-rankcardtop { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .ms-rankcardtop b { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ms-rankcard .sample { font-size: 10.5px; }
+
+  .ed-bigtable { margin-top: 16px; border-top: 1px solid var(--app-ink); }
+  .ed-bigrow { display: grid; grid-template-columns: 56px minmax(0, 1fr) 90px 68px; gap: 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--app-line); }
+  .ed-bignum { font-size: 21px; color: var(--app-ink-2); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .ed-bignum.top { color: var(--terra-text); font-weight: 600; }
+  .ed-bigname { font-size: 15.5px; font-weight: 500; }
+  .ed-bigarea { font-size: 11px; color: var(--app-ink-2); margin-top: 1px; }
+  .ed-bigscore { font-size: 23px; font-weight: 600; text-align: right; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .ed-bign { font-size: 11px; color: var(--app-ink-2); text-align: right; font-variant-numeric: tabular-nums; }
+  .ed-sidepanel { border-left: 1px solid var(--app-line); padding-left: 30px; }
+  .ed-sidepanel h3 { margin: 0; font-size: 14px; font-weight: 600; }
+  .ed-sidepanel p { margin: 7px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--app-ink-2); }
+
+  /* Content pages */
+  .ms-linkcard { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 12px; padding: 14px; font-size: 13px; font-weight: 600; }
+  .ms-linkgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 620px; margin-top: 16px; }
+  .ed-linkgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .at-index { display: grid; gap: 2px; margin-top: 6px; }
+  .at-index a { display: block; padding: 8px 0; border-bottom: 1px solid var(--app-line); font-size: 12px; font-weight: 500; }
+
+  /* Mobile conquistas */
+  .phone { width: 340px; margin: 0 auto; padding: 7px; border-radius: 38px; border: 1px solid #3b3129; background: #0b0806; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.34); }
+  .m-screen { height: 690px; border-radius: 31px; overflow: hidden; background: var(--app-bg); color: var(--app-ink); display: flex; flex-direction: column; font-size: 14px; line-height: 1.4; }
+  .m-status { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 10px 20px 0; font-size: 10px; font-weight: 600; }
+  .m-status span:last-child { font-size: 9px; }
+  .m-bar { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 10px 16px 6px; font-size: 12.5px; font-weight: 600; }
+  .m-bar .back { font-size: 16px; color: var(--app-ink-2); }
+  .m-scroll { flex: 1; min-height: 0; overflow: hidden; position: relative; }
+  .m-body { padding: 0 16px 16px; }
+  .m-h1 { margin: 4px 0 0; font-size: 26px; line-height: 1.08; letter-spacing: -0.03em; font-weight: 600; }
+  .m-lede { margin: 5px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--app-ink-2); }
+  .m-summary { margin-top: 14px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 8px; }
+  .m-summary-top { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; }
+  .m-summary-top b { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .m-card { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 14px; padding: 12px; display: grid; gap: 7px; }
+  .m-cards { display: grid; gap: 8px; margin-top: 12px; }
+  .m-ctop { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .m-cname { font-size: 13px; font-weight: 600; }
+  .m-done { font-size: 10px; font-weight: 600; color: var(--terra-text); }
+  .m-cmeta { font-size: 10.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .m-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+  .m-stamp { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 12px; padding: 9px 7px; display: grid; justify-items: center; gap: 6px; text-align: center; }
+  .m-stamp.on { background: var(--badge); border-color: #e6c6ab; }
+  .m-stampname { font-size: 9.5px; font-weight: 600; line-height: 1.2; min-height: 23px; }
+  .m-ring { width: 42px; height: 42px; border-radius: 999px; display: grid; place-items: center; background: conic-gradient(var(--terra) calc(var(--p) * 1%), var(--app-muted) 0); }
+  .m-ring span { width: 33px; height: 33px; border-radius: 999px; background: var(--app-surface); display: grid; place-items: center; font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .m-stamp.on .m-ring span { background: var(--badge); color: var(--terra-text); }
+  .m-stampmeta { font-size: 9.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .m-rows { margin-top: 12px; display: grid; }
+  .m-row { display: grid; grid-template-columns: minmax(0, 1fr) 60px 34px; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--app-line); }
+  .m-rowname { font-size: 12px; font-weight: 500; }
+  .m-rowmeta { font-size: 10px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .m-rowpct { font-size: 10.5px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+  .m-tabbar { flex: none; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--app-line); background: var(--app-surface); padding: 5px 6px 9px; color: var(--app-ink-2); }
+  .m-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 9px; font-weight: 500; padding: 4px 1px; }
+  .m-tab.on { color: var(--app-ink); font-weight: 600; }
+  .m-tab.on svg { color: var(--terra-text); }
+  .m-ico { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .m-fade { position: absolute; left: 0; right: 0; bottom: 0; height: 48px; background: linear-gradient(to bottom, rgba(250, 247, 242, 0), var(--app-bg)); }
+
+  .foot { padding: 36px 0 56px; border-top: 1px solid var(--board-line); margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: baseline; justify-content: space-between; }
+  .foot p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--board-muted); max-width: 64ch; }
+  .foot small { font-size: 10.5px; color: #7d7166; }
+
+  @media (max-width: 1140px) {
+    .phones { grid-template-columns: 1fr; max-width: 400px; margin-inline: auto; }
+    .directions { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="map" viewBox="0 0 360 560" preserveAspectRatio="xMidYMid slice">
+      <rect width="360" height="560" fill="#ede5d8"/>
+      <g fill="#f6f0e6" stroke="#ddd0bf" stroke-width="1">
+        <rect x="14" y="30" width="74" height="52" rx="2"/>
+        <rect x="100" y="22" width="58" height="64" rx="2"/>
+        <rect x="172" y="34" width="82" height="46" rx="2"/>
+        <rect x="268" y="26" width="78" height="58" rx="2"/>
+        <rect x="20" y="104" width="54" height="70" rx="2"/>
+        <rect x="88" y="112" width="82" height="52" rx="2"/>
+        <rect x="184" y="100" width="60" height="70" rx="2"/>
+        <rect x="258" y="104" width="88" height="54" rx="2"/>
+        <rect x="16" y="196" width="80" height="60" rx="2"/>
+        <rect x="110" y="186" width="58" height="80" rx="2"/>
+        <rect x="184" y="190" width="74" height="56" rx="2"/>
+        <rect x="272" y="182" width="74" height="68" rx="2"/>
+        <rect x="24" y="280" width="62" height="64" rx="2"/>
+        <rect x="100" y="290" width="86" height="48" rx="2"/>
+        <rect x="200" y="284" width="56" height="66" rx="2"/>
+        <rect x="270" y="276" width="76" height="58" rx="2"/>
+        <rect x="18" y="360" width="76" height="54" rx="2"/>
+        <rect x="108" y="364" width="54" height="46" rx="2"/>
+        <rect x="176" y="360" width="82" height="56" rx="2"/>
+        <rect x="272" y="352" width="74" height="60" rx="2"/>
+      </g>
+      <g stroke="#cfc2b0" stroke-width="1" stroke-dasharray="2 3">
+        <path d="M0 92h360"/><path d="M0 172h360"/><path d="M0 262h360"/><path d="M0 342h360"/>
+      </g>
+      <g stroke="#fffdf8" stroke-width="9" stroke-linecap="round" fill="none">
+        <path d="M-12 148c72-12 132 30 208 10s124-30 176 10"/>
+        <path d="M74-10c18 102-28 190 22 296s24 174-18 284"/>
+        <path d="M244-10c-20 100 24 190-12 290s-18 150 18 290"/>
+      </g>
+      <g stroke="#e6dbcb" stroke-width="3" fill="none">
+        <path d="M-10 214c80-14 140 22 210 4s130-22 170 8"/>
+        <path d="M-10 398c90-12 160 22 230 4s110-22 150 8"/>
+        <path d="M150-10c12 90-20 170 8 270s18 170-10 310"/>
+      </g>
+      <path d="M-20 468c90-38 174 34 400-20v132H-20Z" fill="#d7e0da"/>
+      <path d="M-20 468c90-38 174 34 400-20" stroke="#c3d1c8" stroke-width="2" fill="none"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9Z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+  </defs>
+</svg>
+
+<div class="board">
+  <header class="head">
+    <div class="wordmark"><i></i>Flat White Me</div>
+    <p class="kicker">Desktop e conquistas · novembro 2026</p>
+    <h1>Três formas de ocupar o ecrã largo</h1>
+    <p class="intro">A linguagem do telemóvel já está escolhida: cartões quentes, selo de nota e terracota. O que falta decidir é o desktop. As três direções abaixo mantêm a marca e mudam a forma como a página usa a largura. Conquistas aparece primeiro, em telemóvel e em desktop, porque é a página que ainda não tem desenho próprio.</p>
+
+    <div class="directions">
+      <div class="direction">
+        <div class="direction-top"><span class="letter">A</span><h2>Mesa</h2></div>
+        <p>Navegação fixa à esquerda, conteúdo calmo e uma coluna de contexto. É o desktop mais próximo da app atual, com mais ar e hierarquia.</p>
+      </div>
+      <div class="direction">
+        <div class="direction-top"><span class="letter">B</span><h2>Montra</h2></div>
+        <p>Barra superior, largura total e composições editoriais. A nota e a lista ganham escala; o mapa entra como uma peça, não como painel.</p>
+      </div>
+      <div class="direction">
+        <div class="direction-top"><span class="letter">C</span><h2>Atlas</h2></div>
+        <p>Barra lateral estreita e mapa sempre presente. Lisboa é o argumento: lista e mapa vivem lado a lado em Explorar, Lista e Conquistas.</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="section" id="conquistas">
+    <div class="sec-head">
+      <h2>Conquistas</h2>
+      <p>Lisboa tem 24 freguesias. O objetivo é avaliar todos os cafés de uma freguesia. Versões mobile em cima; desktop em A, B e C.</p>
+    </div>
+
+    <div class="phones">
+      <!-- Mobile A -->
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Cartões</h3><span>progresso por freguesia</span></figcaption>
+        <div class="phone">
+          <div class="m-screen" role="img" aria-label="Conquistas mobile, versão A: cartões com progresso por freguesia">
+            <div class="m-status"><span>9:41</span><span>5G ▭</span></div>
+            <div class="m-bar"><span class="back">‹</span><span>Conquistas</span><span style="width:18px"></span></div>
+            <div class="m-scroll">
+              <div class="m-body">
+                <h1 class="m-h1">Conquista a tua freguesia.</h1>
+                <p class="m-lede">Avalia todos os cafés de uma freguesia para a conquistares. Lisboa tem 24.</p>
+                <div class="m-summary">
+                  <div class="m-summary-top"><span>Conquistadas</span><b>3 / 24</b></div>
+                  <div class="progress"><i style="width:13%"></i></div>
+                </div>
+                <div class="m-cards">
+                  <div class="m-card">
+                    <div class="m-ctop"><span class="m-cname">Estrela</span><span class="m-done">Conquistada</span></div>
+                    <div class="progress"><i style="width:100%"></i></div>
+                    <span class="m-cmeta">6 / 6 cafés</span>
+                  </div>
+                  <div class="m-card">
+                    <div class="m-ctop"><span class="m-cname">Santo António</span><span class="m-done">Conquistada</span></div>
+                    <div class="progress"><i style="width:100%"></i></div>
+                    <span class="m-cmeta">12 / 12 cafés</span>
+                  </div>
+                  <div class="m-card">
+                    <div class="m-ctop"><span class="m-cname">Areeiro</span><span class="m-done">Conquistada</span></div>
+                    <div class="progress"><i style="width:100%"></i></div>
+                    <span class="m-cmeta">10 / 10 cafés</span>
+                  </div>
+                  <div class="m-card">
+                    <div class="m-ctop"><span class="m-cname">Misericórdia</span><span class="m-cmeta">8 / 12</span></div>
+                    <div class="progress"><i style="width:67%"></i></div>
+                  </div>
+                  <div class="m-card">
+                    <div class="m-ctop"><span class="m-cname">Campo de Ourique</span><span class="m-cmeta">7 / 11</span></div>
+                    <div class="progress"><i style="width:64%"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="m-fade"></div>
+            </div>
+            <nav class="m-tabbar">
+              <span class="m-tab"><svg class="m-ico"><use href="#i-search"/></svg>Explorar</span>
+              <span class="m-tab"><svg class="m-ico"><use href="#i-heart"/></svg>Lista</span>
+              <span class="m-tab on"><svg class="m-ico"><use href="#i-star"/></svg>Conquistas</span>
+              <span class="m-tab"><svg class="m-ico"><use href="#i-info"/></svg>Sobre</span>
+            </nav>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Mobile B -->
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Selos</h3><span>grelha de 24</span></figcaption>
+        <div class="phone">
+          <div class="m-screen" role="img" aria-label="Conquistas mobile, versão B: grelha de selos circulares por freguesia">
+            <div class="m-status"><span>9:41</span><span>5G ▭</span></div>
+            <div class="m-bar"><span class="back">‹</span><span>Conquistas</span><span style="width:18px"></span></div>
+            <div class="m-scroll">
+              <div class="m-body">
+                <h1 class="m-h1">Conquista a tua freguesia.</h1>
+                <p class="m-lede">Avalia todos os cafés de uma freguesia. Lisboa tem 24.</p>
+                <div class="m-summary">
+                  <div class="m-summary-top"><span>3 selos de 24</span><b>13%</b></div>
+                  <div class="progress"><i style="width:13%"></i></div>
+                </div>
+                <div class="m-grid">
+                  <div class="m-stamp on"><span class="m-stampname">Estrela</span><span class="m-ring" style="--p:100"><span>6/6</span></span><span class="m-stampmeta">conquistada</span></div>
+                  <div class="m-stamp on"><span class="m-stampname">Santo António</span><span class="m-ring" style="--p:100"><span>12/12</span></span><span class="m-stampmeta">conquistada</span></div>
+                  <div class="m-stamp on"><span class="m-stampname">Areeiro</span><span class="m-ring" style="--p:100"><span>10/10</span></span><span class="m-stampmeta">conquistada</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Misericórdia</span><span class="m-ring" style="--p:67"><span>67%</span></span><span class="m-stampmeta">8 / 12</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Campo de Ourique</span><span class="m-ring" style="--p:64"><span>64%</span></span><span class="m-stampmeta">7 / 11</span></div>
+                  <div class="m-stamp"><span class="m-stampname">São Domingos</span><span class="m-ring" style="--p:44"><span>44%</span></span><span class="m-stampmeta">4 / 9</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Arroios</span><span class="m-ring" style="--p:41"><span>41%</span></span><span class="m-stampmeta">9 / 22</span></div>
+                  <div class="m-stamp"><span class="m-stampname">São Vicente</span><span class="m-ring" style="--p:40"><span>40%</span></span><span class="m-stampmeta">4 / 10</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Avenidas Novas</span><span class="m-ring" style="--p:38"><span>38%</span></span><span class="m-stampmeta">6 / 16</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Alvalade</span><span class="m-ring" style="--p:36"><span>36%</span></span><span class="m-stampmeta">5 / 14</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Lumiar</span><span class="m-ring" style="--p:23"><span>23%</span></span><span class="m-stampmeta">3 / 13</span></div>
+                  <div class="m-stamp"><span class="m-stampname">Santa Maria Maior</span><span class="m-ring" style="--p:17"><span>17%</span></span><span class="m-stampmeta">3 / 18</span></div>
+                </div>
+              </div>
+              <div class="m-fade"></div>
+            </div>
+            <nav class="m-tabbar">
+              <span class="m-tab"><svg class="m-ico"><use href="#i-search"/></svg>Explorar</span>
+              <span class="m-tab"><svg class="m-ico"><use href="#i-heart"/></svg>Lista</span>
+              <span class="m-tab on"><svg class="m-ico"><use href="#i-star"/></svg>Conquistas</span>
+              <span class="m-tab"><svg class="m-ico"><use href="#i-info"/></svg>Sobre</span>
+            </nav>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Mobile C -->
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Lista</h3><span>leitura densa</span></figcaption>
+        <div class="phone">
+          <div class="m-screen" role="img" aria-label="Conquistas mobile, versão C: lista densa com progresso">
+            <div class="m-status"><span>9:41</span><span>5G ▭</span></div>
+            <div class="m-bar"><span class="back">‹</span><span>Conquistas</span><span>11 nov 2026</span></div>
+            <div class="m-scroll">
+              <div class="m-body">
+                <h1 class="m-h1">Conquista a tua freguesia.</h1>
+                <p class="m-lede">Avalia todos os cafés de uma freguesia. Lisboa tem 24.</p>
+                <div class="m-summary" style="grid-template-columns:1fr auto;align-items:center">
+                  <span style="font-size:11px;color:var(--app-ink-2)">3 conquistadas · 89 cafés avaliados</span>
+                  <b style="font-size:16px">13%</b>
+                </div>
+                <div class="m-rows">
+                  <div class="m-row"><span class="m-rowname">Estrela</span><span class="m-rowmeta">6 / 6</span><span class="m-rowpct" style="color:var(--terra-text)">100%</span></div>
+                  <div class="m-row"><span class="m-rowname">Santo António</span><span class="m-rowmeta">12 / 12</span><span class="m-rowpct" style="color:var(--terra-text)">100%</span></div>
+                  <div class="m-row"><span class="m-rowname">Areeiro</span><span class="m-rowmeta">10 / 10</span><span class="m-rowpct" style="color:var(--terra-text)">100%</span></div>
+                  <div class="m-row"><span class="m-rowname">Misericórdia</span><span class="m-rowmeta">8 / 12</span><span class="m-rowpct">67%</span></div>
+                  <div class="m-row"><span class="m-rowname">Campo de Ourique</span><span class="m-rowmeta">7 / 11</span><span class="m-rowpct">64%</span></div>
+                  <div class="m-row"><span class="m-rowname">São Domingos de Benfica</span><span class="m-rowmeta">4 / 9</span><span class="m-rowpct">44%</span></div>
+                  <div class="m-row"><span class="m-rowname">Arroios</span><span class="m-rowmeta">9 / 22</span><span class="m-rowpct">41%</span></div>
+                  <div class="m-row"><span class="m-rowname">São Vicente</span><span class="m-rowmeta">4 / 10</span><span class="m-rowpct">40%</span></div>
+                  <div class="m-row"><span class="m-rowname">Avenidas Novas</span><span class="m-rowmeta">6 / 16</span><span class="m-rowpct">38%</span></div>
+                </div>
+              </div>
+              <div class="m-fade"></div>
+            </div>
+            <nav class="m-tabbar">
+              <span class="m-tab"><svg class="m-ico"><use href="#i-search"/></svg>Explorar</span>
+              <span class="m-tab"><svg class="m-ico"><use href="#i-heart"/></svg>Lista</span>
+              <span class="m-tab on"><svg class="m-ico"><use href="#i-star"/></svg>Conquistas</span>
+              <span class="m-tab"><svg class="m-ico"><use href="#i-info"/></svg>Sobre</span>
+            </nav>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="stack">
+      <!-- Desktop A -->
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>cartões de freguesia</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <h1 class="ms-h1">Conquista a tua freguesia.</h1>
+                <p class="ms-lede">Avalia todos os cafés de uma freguesia para a conquistares. Lisboa tem 24.</p>
+                <div class="ms-summary">
+                  <div class="ms-stat"><b>3</b><span>freguesias conquistadas</span></div>
+                  <div class="ms-stat"><b>89</b><span>cafés avaliados</span></div>
+                  <div class="ms-stat"><b>13%</b><span>do mapa completo</span></div>
+                </div>
+                <div class="ms-freg">
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Estrela</span><span class="ms-fregdone">Conquistada</span></div><div class="progress"><i style="width:100%"></i></div><span class="ms-fregmeta">6 / 6 cafés</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Santo António</span><span class="ms-fregdone">Conquistada</span></div><div class="progress"><i style="width:100%"></i></div><span class="ms-fregmeta">12 / 12 cafés</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Areeiro</span><span class="ms-fregdone">Conquistada</span></div><div class="progress"><i style="width:100%"></i></div><span class="ms-fregmeta">10 / 10 cafés</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Misericórdia</span><span class="ms-fregmeta">8 / 12</span></div><div class="progress"><i style="width:67%"></i></div><span class="ms-fregmeta">67%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Campo de Ourique</span><span class="ms-fregmeta">7 / 11</span></div><div class="progress"><i style="width:64%"></i></div><span class="ms-fregmeta">64%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">São Domingos</span><span class="ms-fregmeta">4 / 9</span></div><div class="progress"><i style="width:44%"></i></div><span class="ms-fregmeta">44%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Arroios</span><span class="ms-fregmeta">9 / 22</span></div><div class="progress"><i style="width:41%"></i></div><span class="ms-fregmeta">41%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">São Vicente</span><span class="ms-fregmeta">4 / 10</span></div><div class="progress"><i style="width:40%"></i></div><span class="ms-fregmeta">40%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Avenidas Novas</span><span class="ms-fregmeta">6 / 16</span></div><div class="progress"><i style="width:38%"></i></div><span class="ms-fregmeta">38%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Alvalade</span><span class="ms-fregmeta">5 / 14</span></div><div class="progress"><i style="width:36%"></i></div><span class="ms-fregmeta">36%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Lumiar</span><span class="ms-fregmeta">3 / 13</span></div><div class="progress"><i style="width:23%"></i></div><span class="ms-fregmeta">23%</span></div>
+                  <div class="ms-fregcard"><div class="ms-fregtop"><span class="ms-fregname">Santa Maria Maior</span><span class="ms-fregmeta">3 / 18</span></div><div class="progress"><i style="width:17%"></i></div><span class="ms-fregmeta">17%</span></div>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Desktop B -->
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>números grandes, grelha larga</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span>Explorar</span><span>Lista</span><span class="on">Conquistas</span><span>Top 10</span><span>Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <h1 class="ed-h1">Conquista a tua freguesia.</h1>
+                <p class="ed-lede">Avalia todos os cafés de uma freguesia para a conquistares. Lisboa tem 24.</p>
+                <div class="ed-stats">
+                  <div class="ed-stat"><b>3 / 24</b><span>freguesias conquistadas</span></div>
+                  <div class="ed-stat"><b>89</b><span>cafés avaliados</span></div>
+                  <div class="ed-stat"><b>13%</b><span>do mapa completo</span></div>
+                  <div class="ed-stat"><b>11</b><span>freguesias começadas</span></div>
+                </div>
+                <div class="ed-freg">
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Estrela</span><span class="ed-pct done">100%</span></div><div class="progress sm"><i style="width:100%"></i></div><span class="ed-fregmeta">6 / 6 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Santo António</span><span class="ed-pct done">100%</span></div><div class="progress sm"><i style="width:100%"></i></div><span class="ed-fregmeta">12 / 12 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Areeiro</span><span class="ed-pct done">100%</span></div><div class="progress sm"><i style="width:100%"></i></div><span class="ed-fregmeta">10 / 10 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Misericórdia</span><span class="ed-pct">67%</span></div><div class="progress sm"><i style="width:67%"></i></div><span class="ed-fregmeta">8 / 12 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Campo de Ourique</span><span class="ed-pct">64%</span></div><div class="progress sm"><i style="width:64%"></i></div><span class="ed-fregmeta">7 / 11 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">São Domingos</span><span class="ed-pct">44%</span></div><div class="progress sm"><i style="width:44%"></i></div><span class="ed-fregmeta">4 / 9 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Arroios</span><span class="ed-pct">41%</span></div><div class="progress sm"><i style="width:41%"></i></div><span class="ed-fregmeta">9 / 22 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">São Vicente</span><span class="ed-pct">40%</span></div><div class="progress sm"><i style="width:40%"></i></div><span class="ed-fregmeta">4 / 10 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Avenidas Novas</span><span class="ed-pct">38%</span></div><div class="progress sm"><i style="width:38%"></i></div><span class="ed-fregmeta">6 / 16 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Alvalade</span><span class="ed-pct">36%</span></div><div class="progress sm"><i style="width:36%"></i></div><span class="ed-fregmeta">5 / 14 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Lumiar</span><span class="ed-pct">23%</span></div><div class="progress sm"><i style="width:23%"></i></div><span class="ed-fregmeta">3 / 13 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Santa Maria Maior</span><span class="ed-pct">17%</span></div><div class="progress sm"><i style="width:17%"></i></div><span class="ed-fregmeta">3 / 18 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Benfica</span><span class="ed-pct">17%</span></div><div class="progress sm"><i style="width:17%"></i></div><span class="ed-fregmeta">2 / 12 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Belém</span><span class="ed-pct">25%</span></div><div class="progress sm"><i style="width:25%"></i></div><span class="ed-fregmeta">2 / 8 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Penha de França</span><span class="ed-pct">22%</span></div><div class="progress sm"><i style="width:22%"></i></div><span class="ed-fregmeta">2 / 9 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Carnide</span><span class="ed-pct">20%</span></div><div class="progress sm"><i style="width:20%"></i></div><span class="ed-fregmeta">1 / 5 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Campolide</span><span class="ed-pct">17%</span></div><div class="progress sm"><i style="width:17%"></i></div><span class="ed-fregmeta">1 / 6 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Alcântara</span><span class="ed-pct">14%</span></div><div class="progress sm"><i style="width:14%"></i></div><span class="ed-fregmeta">1 / 7 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Olivais</span><span class="ed-pct">11%</span></div><div class="progress sm"><i style="width:11%"></i></div><span class="ed-fregmeta">1 / 9 cafés</span></div>
+                  <div class="ed-fregcard"><div class="ed-fregtop"><span class="ed-fregname">Ajuda</span><span class="ed-pct">0%</span></div><div class="progress sm"><i style="width:0%"></i></div><span class="ed-fregmeta">0 / 4 cafés</span></div>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- Desktop C -->
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>mapa real das freguesias</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">Conquistas · Lisboa</span><span class="at-topright">3 de 24 · 89 cafés</span></div>
+                <main class="at-main">
+                  <div class="at-split rev">
+                    <div class="at-panel">
+                      <h1 class="at-h1">Conquista a tua freguesia.</h1>
+                      <p class="at-lede">Quanto mais escura a freguesia, mais perto da conquista.</p>
+                      <div class="progress" style="margin-top:4px"><i style="width:13%"></i></div>
+                      <div class="at-freglist">
+                        <div class="at-frow"><span class="at-fname">Estrela</span><span class="progress sm"><i style="width:100%"></i></span><span class="at-fpct" style="color:var(--terra-text)">100%</span></div>
+                        <div class="at-frow"><span class="at-fname">Santo António</span><span class="progress sm"><i style="width:100%"></i></span><span class="at-fpct" style="color:var(--terra-text)">100%</span></div>
+                        <div class="at-frow"><span class="at-fname">Areeiro</span><span class="progress sm"><i style="width:100%"></i></span><span class="at-fpct" style="color:var(--terra-text)">100%</span></div>
+                        <div class="at-frow"><span class="at-fname">Misericórdia</span><span class="progress sm"><i style="width:67%"></i></span><span class="at-fpct">67%</span></div>
+                        <div class="at-frow"><span class="at-fname">Campo de Ourique</span><span class="progress sm"><i style="width:64%"></i></span><span class="at-fpct">64%</span></div>
+                        <div class="at-frow"><span class="at-fname">São Domingos de Benfica</span><span class="progress sm"><i style="width:44%"></i></span><span class="at-fpct">44%</span></div>
+                        <div class="at-frow"><span class="at-fname">Arroios</span><span class="progress sm"><i style="width:41%"></i></span><span class="at-fpct">41%</span></div>
+                        <div class="at-frow"><span class="at-fname">São Vicente</span><span class="progress sm"><i style="width:40%"></i></span><span class="at-fpct">40%</span></div>
+                        <div class="at-frow"><span class="at-fname">Avenidas Novas</span><span class="progress sm"><i style="width:38%"></i></span><span class="at-fpct">38%</span></div>
+                        <div class="at-frow"><span class="at-fname">Alvalade</span><span class="progress sm"><i style="width:36%"></i></span><span class="at-fpct">36%</span></div>
+                      </div>
+                    </div>
+                    <div class="at-map">
+                      <div class="freg-map" data-freg-map aria-hidden="true"></div>
+                      <div class="at-overlay" style="left:auto;right:10px;bottom:10px;width:auto">
+                        <div class="at-legend"><span><i class="at-swatch" style="background:#efe6da"></i>0</span><span><i class="at-swatch" style="background:#e3b59a"></i>até 50%</span><span><i class="at-swatch" style="background:#cf8a63"></i>até 99%</span><span><i class="at-swatch" style="background:#b4532a"></i>100%</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="explorar">
+    <div class="sec-head">
+      <h2>Explorar</h2>
+      <p>A página que mais muda com a largura: lista, mapa e filtros competem pelo mesmo ecrã.</p>
+    </div>
+
+    <div class="stack">
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>lista larga com coluna de mapa</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <h1 class="ms-h1">O teu próximo flat white.</h1>
+                <p class="ms-lede">Lisboa, ordenada por quem prova. Sem lugares pagos. Sem notas editoriais.</p>
+                <div class="ms-toolbar">
+                  <div class="ms-search"><svg class="ms-ico"><use href="#i-search"/></svg>Pesquisar café ou bairro</div>
+                  <span class="ms-btn primary">Lista</span>
+                  <span class="ms-btn ghost">Mapa</span>
+                </div>
+                <div class="ms-chips"><span class="ms-chip on">Filtros</span><span class="ms-chip">Perto de mim</span><span class="ms-chip">Especialidade</span></div>
+                <div class="ms-cols">
+                  <div>
+                    <div class="ms-sechead"><span>No ranking</span><span>8 cafés · 3 com poucas avaliações</span></div>
+                    <div class="ms-cards">
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Fábrica do Largo</div><div class="ms-area">Príncipe Real · especialidade</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,7<small>de 5</small></span><span class="sample">28 avaliações · 9 nov</span></div>
+                        <div class="ms-price">Preço médio 2,80 €</div>
+                        <span class="ms-cardbtn">Avaliar este café</span>
+                      </div>
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">O Canto</div><div class="ms-area">Graça · especialidade</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,5<small>de 5</small></span><span class="sample">19 avaliações · 4 nov</span></div>
+                        <div class="ms-price">Preço médio 2,60 €</div>
+                        <span class="ms-cardbtn">Avaliar este café</span>
+                      </div>
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Alvorada</div><div class="ms-area">Chiado · especialidade</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,4<small>de 5</small></span><span class="sample">12 avaliações · 2 nov</span></div>
+                        <div class="ms-price">Preço médio 2,90 €</div>
+                        <span class="ms-cardbtn">Avaliar este café</span>
+                      </div>
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Meia-Noite</div><div class="ms-area">Anjos · especialidade</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,3<small>de 5</small></span><span class="sample">9 avaliações · 31 out</span></div>
+                        <div class="ms-price">Preço médio 2,70 €</div>
+                        <span class="ms-cardbtn">Avaliar este café</span>
+                      </div>
+                    </div>
+                    <div class="ms-sechead" style="margin-top:16px"><span>Ainda sem avaliações</span><span>3 cafés</span></div>
+                    <div class="ms-cards">
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Café do Beco</div><div class="ms-area">Bairro Alto</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge" style="font-size:13px;padding:4px 10px">Sem nota</span><span class="sample">Ainda sem avaliações</span></div>
+                        <span class="ms-cardbtn">Avaliar este café</span>
+                      </div>
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Largo 22</div><div class="ms-area">Alvalade</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge" style="font-size:13px;padding:4px 10px">Sem nota</span><span class="sample">Ainda sem avaliações</span></div>
+                        <span class="ms-cardbtn">Avaliar este café</span>
+                      </div>
+                    </div>
+                  </div>
+                  <aside class="ms-rail">
+                    <div class="ms-map">
+                      <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                      <span class="pin" style="left:46%;top:30%">4,7</span>
+                      <span class="pin" style="left:62%;top:42%">4,5</span>
+                      <span class="pin" style="left:36%;top:50%">4,4</span>
+                      <span class="pin sel" style="left:54%;top:64%">4,3</span>
+                      <span class="ms-mapnote">11 cafés no mapa</span>
+                    </div>
+                    <span class="ms-btn ghost" style="justify-content:center">Abrir mapa completo</span>
+                    <div class="ms-unrated"><b>Sem pressa.</b>3 cafés ainda sem avaliações ficam no diretório e fora do ranking.</div>
+                  </aside>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>editorial com mapa destacado</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span class="on">Explorar</span><span>Lista</span><span>Conquistas</span><span>Top 10</span><span>Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <div class="ed-split">
+                  <div>
+                    <h1 class="ed-h1">O teu próximo flat white.</h1>
+                    <p class="ed-lede">Lisboa, ordenada por quem prova. Sem lugares pagos. Sem notas editoriais.</p>
+                    <div class="ed-search" style="margin-top:16px"><svg class="ms-ico"><use href="#i-search"/></svg>Pesquisar café ou bairro</div>
+                    <div class="ed-chiprow"><span class="ms-chip on">Filtros</span><span class="ms-chip">Perto de mim</span><span class="ms-chip">Especialidade</span></div>
+                    <div class="ed-table">
+                      <div class="ed-tr"><span class="ed-rank top">01</span><div><div class="ed-name">Fábrica do Largo</div><div class="ed-area">Príncipe Real</div></div><span class="ed-score">4,7</span><span class="ed-n">28 aval.</span></div>
+                      <div class="ed-tr"><span class="ed-rank top">02</span><div><div class="ed-name">O Canto</div><div class="ed-area">Graça</div></div><span class="ed-score">4,5</span><span class="ed-n">19 aval.</span></div>
+                      <div class="ed-tr"><span class="ed-rank top">03</span><div><div class="ed-name">Alvorada</div><div class="ed-area">Chiado</div></div><span class="ed-score">4,4</span><span class="ed-n">12 aval.</span></div>
+                      <div class="ed-tr"><span class="ed-rank">04</span><div><div class="ed-name">Meia-Noite</div><div class="ed-area">Anjos</div></div><span class="ed-score">4,3</span><span class="ed-n">9 aval.</span></div>
+                      <div class="ed-tr"><span class="ed-rank">05</span><div><div class="ed-name">Padaria do Sol</div><div class="ed-area">Campo de Ourique</div></div><span class="ed-score">4,2</span><span class="ed-n">7 aval.</span></div>
+                    </div>
+                    <p class="sample" style="margin-top:10px">Entram cafés com 3 ou mais avaliações nos últimos 365 dias.</p>
+                  </div>
+                  <aside>
+                    <div class="ed-mapcard">
+                      <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                      <span class="pin" style="left:46%;top:30%">4,7</span>
+                      <span class="pin" style="left:62%;top:44%">4,5</span>
+                      <span class="pin sel" style="left:37%;top:58%">4,4</span>
+                      <span class="ms-mapnote">11 cafés no mapa</span>
+                    </div>
+                    <div class="ed-feature">
+                      <div class="ed-feature-top">
+                        <div><div class="ms-name">Fábrica do Largo</div><div class="ms-area">Príncipe Real · especialidade</div></div>
+                        <span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span>
+                      </div>
+                      <div class="ms-cardline"><span class="badge lg">4,7<small>de 5</small></span><span class="sample">28 avaliações · última 9 nov</span></div>
+                      <div class="ed-actions"><span class="ms-btn primary">Avaliar este café</span><span class="ms-btn ghost">Ver café</span></div>
+                    </div>
+                    <div class="ms-unrated" style="margin-top:12px"><b>Ainda sem avaliações</b>3 cafés no diretório. A primeira avaliação põe um café no mapa.</div>
+                  </aside>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>lista e mapa lado a lado</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">Explorar · Lisboa</span><span class="at-topright">11 cafés no mapa · 8 no ranking</span></div>
+                <main class="at-main">
+                  <div class="at-split">
+                    <div class="at-panel">
+                      <h1 class="at-h1">O teu próximo flat white.</h1>
+                      <p class="at-lede">Lisboa, ordenada por quem prova. Sem lugares pagos.</p>
+                      <div class="at-search" style="margin-top:4px"><svg class="ms-ico"><use href="#i-search"/></svg>Pesquisar café ou bairro</div>
+                      <div class="at-chips"><span class="at-chip">Filtros</span><span class="at-chip">Perto de mim</span><span class="at-chip">Especialidade</span></div>
+                      <div class="at-list">
+                        <div class="at-lrow"><span class="at-lrank">01</span><div><div class="at-lname">Fábrica do Largo</div><div class="at-larea">Príncipe Real</div></div><div><div class="at-lscore">4,7</div><div class="at-ln">28 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">02</span><div><div class="at-lname">O Canto</div><div class="at-larea">Graça</div></div><div><div class="at-lscore">4,5</div><div class="at-ln">19 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">03</span><div><div class="at-lname">Alvorada</div><div class="at-larea">Chiado</div></div><div><div class="at-lscore">4,4</div><div class="at-ln">12 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">04</span><div><div class="at-lname">Meia-Noite</div><div class="at-larea">Anjos</div></div><div><div class="at-lscore">4,3</div><div class="at-ln">9 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">05</span><div><div class="at-lname">Padaria do Sol</div><div class="at-larea">Campo de Ourique</div></div><div><div class="at-lscore">4,2</div><div class="at-ln">7 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">06</span><div><div class="at-lname">Três Xícaras</div><div class="at-larea">Santos</div></div><div><div class="at-lscore">4,0</div><div class="at-ln">5 aval.</div></div></div>
+                      </div>
+                    </div>
+                    <div class="at-map">
+                      <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                      <span class="pin" style="left:46%;top:30%">4,7</span>
+                      <span class="pin" style="left:62%;top:42%">4,5</span>
+                      <span class="pin" style="left:36%;top:50%">4,4</span>
+                      <span class="pin sel" style="left:54%;top:64%">4,3</span>
+                      <span class="pin raw" style="left:70%;top:34%"></span>
+                      <div class="at-overlay">
+                        <div class="at-overlay-top">
+                          <div><div class="at-name">Fábrica do Largo</div><div class="at-area">Príncipe Real · especialidade</div></div>
+                          <span class="badge">4,7<small>de 5</small></span>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span class="sample">28 avaliações · última 9 nov</span><span class="ms-btn primary" style="height:32px;padding:0 12px;font-size:11.5px">Ver café</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="cafe">
+    <div class="sec-head">
+      <h2>Café</h2>
+      <p>A nota é o herói. As três direções dão-lhe escalas diferentes e mudam o lugar da ação.</p>
+    </div>
+
+    <div class="stack">
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>nota, dimensões e coluna de ação</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <p class="sample" style="margin:0 0 6px">← Explorar Lisboa</p>
+                <div class="cafe-head">
+                  <div>
+                    <p class="ms-area" style="margin:0">Príncipe Real · especialidade</p>
+                    <h1 class="ms-h1" style="margin-top:4px">Fábrica do Largo</h1>
+                  </div>
+                </div>
+                <div class="ms-cols" style="grid-template-columns:minmax(0,1fr) 310px;margin-top:14px">
+                  <div style="display:grid;gap:16px;align-content:start">
+                    <div class="ms-card" style="padding:16px;gap:9px">
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><span class="badge lg">4,7<small>de 5</small></span><span style="font-size:12px;font-weight:600;color:var(--success)">No ranking</span></div>
+                      <p class="sample"><b style="color:var(--app-ink);font-weight:600">28 avaliações</b> nos últimos 365 dias · última 9 nov 2026</p>
+                    </div>
+                    <div>
+                      <div class="ms-sechead"><span>Cada detalhe conta</span><span>1–5</span></div>
+                      <div class="ms-dims">
+                        <div class="ms-dim"><div class="ms-dimtop"><span>Sabor</span><b>4,8 / 5</b></div><div class="progress"><i style="width:96%"></i></div></div>
+                        <div class="ms-dim"><div class="ms-dimtop"><span>Textura do leite</span><b>4,5 / 5</b></div><div class="progress"><i style="width:90%"></i></div></div>
+                        <div class="ms-dim"><div class="ms-dimtop"><span>Temperatura</span><b>4,2 / 5</b></div><div class="progress"><i style="width:84%"></i></div></div>
+                        <div class="ms-dim"><div class="ms-dimtop"><span>Qualidade-preço</span><b>4,1 / 5</b></div><div class="progress"><i style="width:82%"></i></div></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="ms-sechead"><span>Notas públicas</span><span>mais recentes</span></div>
+                      <div class="ms-note-list">
+                        <div class="ms-note"><p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p><div class="ms-notemeta"><span class="ms-avatar">M</span>Marta · 9 nov 2026</div></div>
+                        <div class="ms-note"><p>“A melhor temperatura que provei em Lisboa este ano. Não queima.”</p><div class="ms-notemeta"><span class="ms-avatar">J</span>João · 2 nov 2026</div></div>
+                      </div>
+                    </div>
+                  </div>
+                  <aside class="ms-rail">
+                    <div class="ms-card" style="gap:9px">
+                      <span class="ms-btn primary" style="justify-content:center">Avaliar este café</span>
+                      <span class="ms-btn ghost" style="justify-content:center">Guardar para depois</span>
+                      <div class="ms-facts"><span class="ms-fact">Preço médio <b>2,80 €</b></span><span class="ms-fact">Leite <b>inteiro</b></span><span class="ms-fact"><b>Normal</b></span></div>
+                    </div>
+                    <div class="ms-map" style="height:190px">
+                      <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                      <span class="pin sel" style="left:52%;top:48%">4,7</span>
+                      <span class="ms-mapnote">Príncipe Real</span>
+                    </div>
+                  </aside>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>nota em escala editorial</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span class="on">Explorar</span><span>Lista</span><span>Conquistas</span><span>Top 10</span><span>Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <div class="cafe-head">
+                  <div>
+                    <p class="ms-area" style="margin:0;font-size:12px">Príncipe Real · especialidade</p>
+                    <h1 class="ed-h1" style="margin-top:4px">Fábrica do Largo</h1>
+                  </div>
+                  <div class="ed-actions"><span class="ms-btn primary">Avaliar este café</span><span class="ms-btn ghost">Guardar</span></div>
+                </div>
+                <div class="ed-cafe-grid">
+                  <div>
+                    <p class="ed-lede" style="margin-top:0">28 avaliações nos últimos 365 dias. Última visita a 9 nov 2026.</p>
+                    <div class="ed-dimtable">
+                      <div class="ed-dimrow"><span>Sabor</span><div class="progress"><i style="width:96%"></i></div><b>4,8 / 5</b></div>
+                      <div class="ed-dimrow"><span>Textura do leite</span><div class="progress"><i style="width:90%"></i></div><b>4,5 / 5</b></div>
+                      <div class="ed-dimrow"><span>Temperatura</span><div class="progress"><i style="width:84%"></i></div><b>4,2 / 5</b></div>
+                      <div class="ed-dimrow"><span>Qualidade-preço</span><div class="progress"><i style="width:82%"></i></div><b>4,1 / 5</b></div>
+                    </div>
+                    <div class="ed-factrow"><span class="ms-fact">Preço médio <b>2,80 €</b></span><span class="ms-fact">Leite <b>inteiro</b></span><span class="ms-fact"><b>Normal</b></span></div>
+                    <div class="ms-sechead" style="margin-top:22px"><span>Notas públicas</span><span>mais recentes</span></div>
+                    <div class="ms-note-list" style="grid-template-columns:1fr 1fr">
+                      <div class="ed-note"><p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p><div class="ms-notemeta"><span class="ms-avatar">M</span>Marta · 9 nov 2026</div></div>
+                      <div class="ed-note"><p>“A melhor temperatura que provei em Lisboa este ano. Não queima.”</p><div class="ms-notemeta"><span class="ms-avatar">J</span>João · 2 nov 2026</div></div>
+                    </div>
+                  </div>
+                  <div class="ed-scorehero">
+                    <div class="ed-giant">4,7<small>/5</small></div>
+                    <p class="sample">28 avaliações · última 9 nov 2026</p>
+                    <p class="ed-scoreline">No ranking</p>
+                  </div>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>ficha com mapa de localização</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">Fábrica do Largo</span><span class="at-topright">Príncipe Real · especialidade</span></div>
+                <main class="at-main">
+                  <div class="at-split rev" style="grid-template-columns:minmax(0,1fr) 350px">
+                    <div class="at-panel">
+                      <p class="ms-area" style="margin:0">Príncipe Real · especialidade</p>
+                      <h1 class="at-h1" style="font-size:30px">Fábrica do Largo</h1>
+                      <div class="at-scorerow"><span class="badge lg">4,7<small>de 5</small></span><span class="sample">28 avaliações · última 9 nov 2026</span><span style="font-size:11px;font-weight:600;color:var(--success)">No ranking</span></div>
+                      <div class="at-dimgrid">
+                        <div class="at-dim"><div class="at-dimtop"><span>Sabor</span><b>4,8</b></div><div class="progress sm"><i style="width:96%"></i></div></div>
+                        <div class="at-dim"><div class="at-dimtop"><span>Textura do leite</span><b>4,5</b></div><div class="progress sm"><i style="width:90%"></i></div></div>
+                        <div class="at-dim"><div class="at-dimtop"><span>Temperatura</span><b>4,2</b></div><div class="progress sm"><i style="width:84%"></i></div></div>
+                        <div class="at-dim"><div class="at-dimtop"><span>Qualidade-preço</span><b>4,1</b></div><div class="progress sm"><i style="width:82%"></i></div></div>
+                      </div>
+                      <div class="at-chips"><span class="at-chip">Preço médio 2,80 €</span><span class="at-chip">Leite inteiro</span><span class="at-chip">Normal</span></div>
+                      <div class="ms-sechead" style="margin-top:16px"><span>Notas públicas</span><span>mais recentes</span></div>
+                      <div class="at-notes">
+                        <div class="ms-note"><p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p><div class="ms-notemeta"><span class="ms-avatar">M</span>Marta · 9 nov 2026</div></div>
+                        <div class="ms-note"><p>“A melhor temperatura que provei em Lisboa este ano. Não queima.”</p><div class="ms-notemeta"><span class="ms-avatar">J</span>João · 2 nov 2026</div></div>
+                      </div>
+                    </div>
+                    <div class="at-col">
+                      <div class="at-map" style="height:236px">
+                        <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                        <span class="pin sel" style="left:52%;top:48%">4,7</span>
+                      </div>
+                      <div class="at-panel">
+                        <span class="ms-btn primary" style="justify-content:center">Avaliar este café</span>
+                        <span class="ms-btn ghost" style="justify-content:center">Guardar para depois</span>
+                      </div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="mapa">
+    <div class="sec-head">
+      <h2>Mapa</h2>
+      <p>O ecrã onde a geografia deve mandar. A diferença é quanto espaço o mapa recebe e onde vive a lista.</p>
+    </div>
+
+    <div class="stack">
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>mapa largo com coluna de detalhe</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <h1 class="ms-h1">Lisboa, café a café.</h1>
+                <p class="ms-lede">11 cafés no mapa. Arrasta para explorar ou usa a lista.</p>
+                <div class="ms-toolbar">
+                  <div class="ms-search"><svg class="ms-ico"><use href="#i-search"/></svg>Pesquisar no mapa</div>
+                  <span class="ms-btn ghost">Lista</span>
+                  <span class="ms-btn primary">Mapa</span>
+                </div>
+                <div class="ms-chips"><span class="ms-chip">Filtros</span><span class="ms-chip">Perto de mim</span><span class="ms-chip on">Especialidade</span></div>
+                <div class="ms-cols" style="margin-top:14px">
+                  <div class="ms-map" style="height:438px;border-radius:16px">
+                    <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                    <span class="pin" style="left:46%;top:30%">4,7</span>
+                    <span class="pin" style="left:62%;top:42%">4,5</span>
+                    <span class="pin" style="left:36%;top:50%">4,4</span>
+                    <span class="pin sel" style="left:54%;top:64%">4,3</span>
+                    <span class="pin" style="left:72%;top:54%">4,2</span>
+                    <span class="pin raw" style="left:70%;top:34%"></span>
+                  </div>
+                  <aside class="ms-rail">
+                    <div class="ms-card">
+                      <div class="ms-card-top"><div><div class="ms-name">Fábrica do Largo</div><div class="ms-area">Príncipe Real · especialidade</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                      <div class="ms-cardline"><span class="badge">4,7<small>de 5</small></span><span class="sample">28 avaliações</span></div>
+                      <div class="ed-actions"><span class="ms-btn primary" style="height:34px;font-size:11.5px">Ver café</span><span class="ms-btn ghost" style="height:34px;font-size:11.5px">Avaliar</span></div>
+                    </div>
+                    <div class="ms-sechead"><span>Nesta vista</span><span>7 cafés</span></div>
+                    <div class="at-list">
+                      <div class="at-lrow"><span class="at-lrank">01</span><div><div class="at-lname">Fábrica do Largo</div><div class="at-larea">Príncipe Real</div></div><div><div class="at-lscore">4,7</div><div class="at-ln">28 aval.</div></div></div>
+                      <div class="at-lrow"><span class="at-lrank">02</span><div><div class="at-lname">O Canto</div><div class="at-larea">Graça</div></div><div><div class="at-lscore">4,5</div><div class="at-ln">19 aval.</div></div></div>
+                      <div class="at-lrow"><span class="at-lrank">03</span><div><div class="at-lname">Alvorada</div><div class="at-larea">Chiado</div></div><div><div class="at-lscore">4,4</div><div class="at-ln">12 aval.</div></div></div>
+                      <div class="at-lrow"><span class="at-lrank">04</span><div><div class="at-lname">Meia-Noite</div><div class="at-larea">Anjos</div></div><div><div class="at-lscore">4,3</div><div class="at-ln">9 aval.</div></div></div>
+                    </div>
+                  </aside>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>mapa em palco</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span class="on">Explorar</span><span>Lista</span><span>Conquistas</span><span>Top 10</span><span>Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <h1 class="ed-h1">Lisboa, café a café.</h1>
+                <p class="ed-lede">11 cafés no mapa. Sem lugares pagos.</p>
+                <div class="ed-mapstage" style="margin-top:16px">
+                  <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                  <span class="pin" style="left:46%;top:30%">4,7</span>
+                  <span class="pin" style="left:62%;top:42%">4,5</span>
+                  <span class="pin" style="left:36%;top:50%">4,4</span>
+                  <span class="pin sel" style="left:54%;top:64%">4,3</span>
+                  <span class="pin" style="left:72%;top:54%">4,2</span>
+                  <div class="ed-float">
+                    <div class="ed-search"><svg class="ms-ico"><use href="#i-search"/></svg>Pesquisar no mapa</div>
+                    <div class="ed-chiprow"><span class="ms-chip on">Filtros</span><span class="ms-chip">Perto de mim</span><span class="ms-chip">Especialidade</span></div>
+                  </div>
+                  <div class="ed-mapcard2">
+                    <div class="ed-feature-top">
+                      <div><div class="ms-name">Meia-Noite</div><div class="ms-area">Anjos · especialidade</div></div>
+                      <span class="badge">4,3<small>de 5</small></span>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span class="sample">9 avaliações · última 3 nov</span><span class="ms-btn primary" style="height:32px;padding:0 12px;font-size:11.5px">Ver café</span></div>
+                  </div>
+                </div>
+                <p class="sample" style="margin-top:10px">© OpenFreeMap · © OpenMapTiles · Data from OpenStreetMap</p>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>mapa com lista flutuante</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">Mapa · Lisboa</span><span class="at-topright">11 cafés · 8 no ranking</span></div>
+                <main class="at-main">
+                  <div class="at-mapstage">
+                    <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                    <span class="pin" style="left:46%;top:30%">4,7</span>
+                    <span class="pin" style="left:62%;top:42%">4,5</span>
+                    <span class="pin" style="left:36%;top:50%">4,4</span>
+                    <span class="pin sel" style="left:54%;top:64%">4,3</span>
+                    <span class="pin" style="left:72%;top:54%">4,2</span>
+                    <span class="pin raw" style="left:70%;top:34%"></span>
+                    <div class="at-float">
+                      <div class="at-search"><svg class="ms-ico"><use href="#i-search"/></svg>Pesquisar no mapa</div>
+                      <div class="at-chips"><span class="at-chip">Filtros</span><span class="at-chip">Perto de mim</span><span class="at-chip">Especialidade</span></div>
+                      <div class="at-list">
+                        <div class="at-lrow"><span class="at-lrank">01</span><div><div class="at-lname">Fábrica do Largo</div><div class="at-larea">Príncipe Real</div></div><div><div class="at-lscore">4,7</div><div class="at-ln">28</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">02</span><div><div class="at-lname">O Canto</div><div class="at-larea">Graça</div></div><div><div class="at-lscore">4,5</div><div class="at-ln">19</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">03</span><div><div class="at-lname">Alvorada</div><div class="at-larea">Chiado</div></div><div><div class="at-lscore">4,4</div><div class="at-ln">12</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">04</span><div><div class="at-lname">Meia-Noite</div><div class="at-larea">Anjos</div></div><div><div class="at-lscore">4,3</div><div class="at-ln">9</div></div></div>
+                      </div>
+                    </div>
+                    <div class="at-overlay">
+                      <div class="at-overlay-top"><div><div class="at-name">Meia-Noite</div><div class="at-area">Anjos · especialidade</div></div><span class="badge">4,3<small>de 5</small></span></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span class="sample">9 avaliações · última 3 nov</span><span class="ms-btn primary" style="height:32px;padding:0 12px;font-size:11.5px">Ver café</span></div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="top">
+    <div class="sec-head">
+      <h2>Top 10</h2>
+      <p>A mesma tabela, três temperaturas: pódio de cartões, tabela de jornal ou tabela com mapa.</p>
+    </div>
+
+    <div class="stack">
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>pódio e cartões</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <h1 class="ms-h1">O melhor flat white de Lisboa.</h1>
+                <p class="ms-lede">Top 10 segundo quem prova. Sem lugares pagos. Só entram cafés com 3 ou mais avaliações.</p>
+                <div class="ms-podium" style="margin-top:16px">
+                  <div class="ms-pod"><span class="ms-podrank">02</span><span class="ms-podname">O Canto</span><span class="ms-podscore">4,5<small> /5</small></span><span class="ms-podn">19 aval.</span></div>
+                  <div class="ms-pod first"><span class="ms-podrank">01</span><span class="ms-podname">Fábrica do Largo</span><span class="ms-podscore">4,7<small> /5</small></span><span class="ms-podn">28 aval.</span></div>
+                  <div class="ms-pod"><span class="ms-podrank">03</span><span class="ms-podname">Alvorada</span><span class="ms-podscore">4,4<small> /5</small></span><span class="ms-podn">12 aval.</span></div>
+                </div>
+                <div class="ms-sechead" style="margin-top:22px"><span>Do 4.º ao 10.º</span><span>por nota</span></div>
+                <div class="ms-rankcards">
+                  <div class="ms-rankcard"><div class="ms-rankcardtop"><span class="ms-name">Meia-Noite</span><b>4,3</b></div><span class="sample">Anjos · 9 avaliações</span></div>
+                  <div class="ms-rankcard"><div class="ms-rankcardtop"><span class="ms-name">Padaria do Sol</span><b>4,2</b></div><span class="sample">Campo de Ourique · 7 avaliações</span></div>
+                  <div class="ms-rankcard"><div class="ms-rankcardtop"><span class="ms-name">Três Xícaras</span><b>4,0</b></div><span class="sample">Santos · 5 avaliações</span></div>
+                  <div class="ms-rankcard"><div class="ms-rankcardtop"><span class="ms-name">Casa Almada</span><b>3,9</b></div><span class="sample">Alfama · 4 avaliações</span></div>
+                  <div class="ms-rankcard"><div class="ms-rankcardtop"><span class="ms-name">Ponto Final</span><b>3,8</b></div><span class="sample">Estrela · 3 avaliações</span></div>
+                  <div class="ms-rankcard"><div class="ms-rankcardtop"><span class="ms-name">Largo 22</span><b>3,8</b></div><span class="sample">Alvalade · 3 avaliações</span></div>
+                </div>
+                <div class="ms-unrated" style="max-width:660px;margin-top:18px"><b>Como entra um café</b>Precisa de 3 avaliações nos últimos 365 dias. A nota é a média ponderada das visitas, com o peso a reduzir para metade a cada 182,5 dias.</div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>tabela de jornal</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span>Explorar</span><span>Lista</span><span>Conquistas</span><span class="on">Top 10</span><span>Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <h1 class="ed-h1">O melhor flat white de Lisboa.</h1>
+                <p class="ed-lede">Top 10 segundo quem prova. Sem lugares pagos.</p>
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:44px;margin-top:6px">
+                  <div>
+                    <div class="ed-bigtable">
+                      <div class="ed-bigrow"><span class="ed-bignum top">01</span><div><div class="ed-bigname">Fábrica do Largo</div><div class="ed-bigarea">Príncipe Real</div></div><span class="ed-bigscore">4,7</span><span class="ed-bign">28 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum top">02</span><div><div class="ed-bigname">O Canto</div><div class="ed-bigarea">Graça</div></div><span class="ed-bigscore">4,5</span><span class="ed-bign">19 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum top">03</span><div><div class="ed-bigname">Alvorada</div><div class="ed-bigarea">Chiado</div></div><span class="ed-bigscore">4,4</span><span class="ed-bign">12 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum">04</span><div><div class="ed-bigname">Meia-Noite</div><div class="ed-bigarea">Anjos</div></div><span class="ed-bigscore">4,3</span><span class="ed-bign">9 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum">05</span><div><div class="ed-bigname">Padaria do Sol</div><div class="ed-bigarea">Campo de Ourique</div></div><span class="ed-bigscore">4,2</span><span class="ed-bign">7 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum">06</span><div><div class="ed-bigname">Três Xícaras</div><div class="ed-bigarea">Santos</div></div><span class="ed-bigscore">4,0</span><span class="ed-bign">5 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum">07</span><div><div class="ed-bigname">Casa Almada</div><div class="ed-bigarea">Alfama</div></div><span class="ed-bigscore">3,9</span><span class="ed-bign">4 aval.</span></div>
+                      <div class="ed-bigrow"><span class="ed-bignum">08</span><div><div class="ed-bigname">Ponto Final</div><div class="ed-bigarea">Estrela</div></div><span class="ed-bigscore">3,8</span><span class="ed-bign">3 aval.</span></div>
+                    </div>
+                  </div>
+                  <aside class="ed-sidepanel">
+                    <h3>Como entra um café</h3>
+                    <p>Precisa de 3 avaliações nos últimos 365 dias. A nota é a média ponderada das visitas, com o peso a reduzir para metade a cada 182,5 dias.</p>
+                    <p>Nenhum café paga para aparecer. A amostra fica sempre à vista.</p>
+                    <span class="ms-btn ghost" style="margin-top:12px;justify-content:center">Explorar lista e mapa</span>
+                  </aside>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>tabela com mapa do top 10</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">Top 10 · Lisboa</span><span class="at-topright">10 cafés no ranking</span></div>
+                <main class="at-main">
+                  <div class="at-split" style="grid-template-columns:minmax(0,1fr) 420px">
+                    <div class="at-panel">
+                      <h1 class="at-h1">O melhor flat white de Lisboa.</h1>
+                      <p class="at-lede">Top 10 segundo quem prova. Só entram cafés com 3 ou mais avaliações.</p>
+                      <div class="at-list">
+                        <div class="at-lrow"><span class="at-lrank" style="color:var(--terra-text);font-weight:600">01</span><div><div class="at-lname">Fábrica do Largo</div><div class="at-larea">Príncipe Real</div></div><div><div class="at-lscore">4,7</div><div class="at-ln">28 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank" style="color:var(--terra-text);font-weight:600">02</span><div><div class="at-lname">O Canto</div><div class="at-larea">Graça</div></div><div><div class="at-lscore">4,5</div><div class="at-ln">19 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank" style="color:var(--terra-text);font-weight:600">03</span><div><div class="at-lname">Alvorada</div><div class="at-larea">Chiado</div></div><div><div class="at-lscore">4,4</div><div class="at-ln">12 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">04</span><div><div class="at-lname">Meia-Noite</div><div class="at-larea">Anjos</div></div><div><div class="at-lscore">4,3</div><div class="at-ln">9 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">05</span><div><div class="at-lname">Padaria do Sol</div><div class="at-larea">Campo de Ourique</div></div><div><div class="at-lscore">4,2</div><div class="at-ln">7 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">06</span><div><div class="at-lname">Três Xícaras</div><div class="at-larea">Santos</div></div><div><div class="at-lscore">4,0</div><div class="at-ln">5 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">07</span><div><div class="at-lname">Casa Almada</div><div class="at-larea">Alfama</div></div><div><div class="at-lscore">3,9</div><div class="at-ln">4 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">08</span><div><div class="at-lname">Ponto Final</div><div class="at-larea">Estrela</div></div><div><div class="at-lscore">3,8</div><div class="at-ln">3 aval.</div></div></div>
+                      </div>
+                    </div>
+                    <div class="at-map">
+                      <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                      <span class="pin" style="left:46%;top:30%">1</span>
+                      <span class="pin" style="left:62%;top:42%">2</span>
+                      <span class="pin" style="left:36%;top:50%">3</span>
+                      <span class="pin" style="left:54%;top:64%">4</span>
+                      <span class="pin" style="left:72%;top:54%">5</span>
+                      <span class="pin" style="left:44%;top:44%">6</span>
+                      <span class="pin" style="left:58%;top:36%">7</span>
+                      <span class="pin" style="left:66%;top:62%">8</span>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="lista">
+    <div class="sec-head">
+      <h2>A minha lista</h2>
+      <p>Guardados e avaliações no mesmo sítio. No desktop há espaço para os mostrar lado a lado.</p>
+    </div>
+
+    <div class="stack">
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>guardados e avaliações lado a lado</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <h1 class="ms-h1">A minha lista.</h1>
+                <p class="ms-lede">Guardados para a próxima visita e o registo do que já provaste. Só tu vês esta lista.</p>
+                <div class="ms-cols" style="grid-template-columns:1.08fr 0.92fr;margin-top:16px">
+                  <div>
+                    <div class="ms-sechead"><span>Guardados por ti</span><span>3 cafés</span></div>
+                    <div class="ms-cards">
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Fábrica do Largo</div><div class="ms-area">Príncipe Real</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,7<small>de 5</small></span><span class="sample">28 avaliações</span></div>
+                        <span class="ms-cardbtn">Abrir café</span>
+                      </div>
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">O Canto</div><div class="ms-area">Graça</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,5<small>de 5</small></span><span class="sample">19 avaliações</span></div>
+                        <span class="ms-cardbtn">Abrir café</span>
+                      </div>
+                      <div class="ms-card">
+                        <div class="ms-card-top"><div><div class="ms-name">Meia-Noite</div><div class="ms-area">Anjos</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div>
+                        <div class="ms-cardline"><span class="badge">4,3<small>de 5</small></span><span class="sample">9 avaliações</span></div>
+                        <span class="ms-cardbtn">Abrir café</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="ms-sechead"><span>As minhas avaliações</span><span>2 visitas</span></div>
+                    <div class="ms-note-list">
+                      <div class="ms-note"><p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p><div class="ms-notemeta"><span class="ms-avatar">F</span>Fábrica do Largo · 9 nov 2026</div></div>
+                      <div class="ms-note"><p>“Temperatura certa, mas o preço já pesa.”</p><div class="ms-notemeta"><span class="ms-avatar">A</span>Alvorada · 2 nov 2026</div></div>
+                    </div>
+                    <div class="ms-unrated" style="margin-top:12px"><b>Nota editável 30 dias.</b>Depois da primeira visita, a nota fica bloqueada.</div>
+                  </div>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>grelha larga e diário de provas</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span>Explorar</span><span class="on">Lista</span><span>Conquistas</span><span>Top 10</span><span>Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <h1 class="ed-h1">A minha lista.</h1>
+                <p class="ed-lede">Guardados para a próxima visita e o registo do que já provaste.</p>
+                <div style="display:grid;grid-template-columns:minmax(0,1fr) 336px;gap:44px;margin-top:20px">
+                  <div>
+                    <div class="ms-sechead"><span>Guardados por ti</span><span>3 cafés</span></div>
+                    <div class="ms-cards" style="margin-top:12px">
+                      <div class="ms-card" style="padding:16px"><div class="ms-card-top"><div><div class="ms-name">Fábrica do Largo</div><div class="ms-area">Príncipe Real</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div><div class="ms-cardline"><span class="badge">4,7<small>de 5</small></span><span class="sample">28 avaliações</span></div><span class="ms-cardbtn">Abrir café</span></div>
+                      <div class="ms-card" style="padding:16px"><div class="ms-card-top"><div><div class="ms-name">O Canto</div><div class="ms-area">Graça</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div><div class="ms-cardline"><span class="badge">4,5<small>de 5</small></span><span class="sample">19 avaliações</span></div><span class="ms-cardbtn">Abrir café</span></div>
+                      <div class="ms-card" style="padding:16px"><div class="ms-card-top"><div><div class="ms-name">Meia-Noite</div><div class="ms-area">Anjos</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div><div class="ms-cardline"><span class="badge">4,3<small>de 5</small></span><span class="sample">9 avaliações</span></div><span class="ms-cardbtn">Abrir café</span></div>
+                      <div class="ms-card" style="padding:16px"><div class="ms-card-top"><div><div class="ms-name">Padaria do Sol</div><div class="ms-area">Campo de Ourique</div></div><span class="ms-heart"><svg class="ms-ico"><use href="#i-heart"/></svg></span></div><div class="ms-cardline"><span class="badge">4,2<small>de 5</small></span><span class="sample">7 avaliações</span></div><span class="ms-cardbtn">Abrir café</span></div>
+                    </div>
+                  </div>
+                  <aside>
+                    <div class="ms-sechead"><span>As minhas avaliações</span><span>2 visitas</span></div>
+                    <div class="ms-note-list">
+                      <div class="ed-note"><p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p><div class="ms-notemeta"><span class="ms-avatar">F</span>Fábrica do Largo · 9 nov 2026</div></div>
+                      <div class="ed-note"><p>“Temperatura certa, mas o preço já pesa.”</p><div class="ms-notemeta"><span class="ms-avatar">A</span>Alvorada · 2 nov 2026</div></div>
+                    </div>
+                    <div class="ms-unrated" style="margin-top:12px"><b>Nota editável 30 dias.</b>Depois da primeira visita, a nota fica bloqueada.</div>
+                  </aside>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>lista guardada no mapa</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">A minha lista</span><span class="at-topright">3 guardados · 2 avaliações</span></div>
+                <main class="at-main">
+                  <div class="at-split rev" style="grid-template-columns:380px minmax(0,1fr)">
+                    <div class="at-panel">
+                      <h1 class="at-h1">A minha lista.</h1>
+                      <p class="at-lede">Só tu vês esta lista.</p>
+                      <div class="at-list">
+                        <div class="at-lrow"><span class="at-lrank">01</span><div><div class="at-lname">Fábrica do Largo</div><div class="at-larea">Príncipe Real</div></div><div><div class="at-lscore">4,7</div><div class="at-ln">28 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">02</span><div><div class="at-lname">O Canto</div><div class="at-larea">Graça</div></div><div><div class="at-lscore">4,5</div><div class="at-ln">19 aval.</div></div></div>
+                        <div class="at-lrow"><span class="at-lrank">03</span><div><div class="at-lname">Meia-Noite</div><div class="at-larea">Anjos</div></div><div><div class="at-lscore">4,3</div><div class="at-ln">9 aval.</div></div></div>
+                      </div>
+                      <div class="ms-sechead" style="margin-top:12px"><span>As minhas avaliações</span><span>2</span></div>
+                      <div class="at-notes">
+                        <div class="ms-note"><p>“Leite bem texturado, sem bolhas.”</p><div class="ms-notemeta"><span class="ms-avatar">F</span>Fábrica do Largo · 9 nov</div></div>
+                      </div>
+                    </div>
+                    <div class="at-map">
+                      <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                      <span class="pin" style="left:46%;top:30%">4,7</span>
+                      <span class="pin" style="left:62%;top:42%">4,5</span>
+                      <span class="pin sel" style="left:36%;top:50%">4,3</span>
+                      <div class="at-overlay">
+                        <div class="at-overlay-top"><div><div class="at-name">Fábrica do Largo</div><div class="at-area">Príncipe Real · especialidade</div></div><span class="badge">4,7<small>de 5</small></span></div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span class="sample">28 avaliações · última 9 nov</span><span class="ms-btn primary" style="height:32px;padding:0 12px;font-size:11.5px">Abrir café</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="conteudo">
+    <div class="sec-head">
+      <h2>Páginas de conteúdo</h2>
+      <p>Sobre, como funciona, privacidade, contacto, entrar e sugerir partilham a mesma casca. Uma amostra em cada direção; as restantes seguem-na.</p>
+    </div>
+
+    <div class="stack">
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>A</b><h3>Mesa</h3><span>coluna de leitura dentro da app</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ms">
+              <aside class="ms-side">
+                <div class="ms-logo"><i></i>Flat White Me</div>
+                <nav class="ms-nav">
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="ms-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="ms-row on"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="ms-foot"><span class="ms-city">Lisboa</span><span class="ms-user">Marta · conta Google</span></div>
+              </aside>
+              <main class="ms-main">
+                <h1 class="ms-h1">Uma boa chávena. Uma nota honesta.</h1>
+                <p class="ms-lede">O ranking é feito por quem prova. Nenhum café paga para aparecer e nenhuma nota editorial altera o resultado.</p>
+                <div class="ms-linkgrid">
+                  <span class="ms-linkcard">Como funciona</span>
+                  <span class="ms-linkcard">Privacidade</span>
+                  <span class="ms-linkcard">Top 10 de Lisboa</span>
+                  <span class="ms-linkcard">Contacto</span>
+                  <span class="ms-linkcard">Sugerir café</span>
+                  <span class="ms-linkcard">Entrar com Google</span>
+                </div>
+                <p class="sample" style="margin-top:18px">Dados do diretório: Overture Maps · Mapa: OpenFreeMap e OpenStreetMap</p>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>B</b><h3>Montra</h3><span>editorial em duas colunas</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="ed">
+              <header class="ed-top">
+                <span class="ed-logo"><i></i>Flat White Me</span>
+                <nav class="ed-links"><span>Explorar</span><span>Lista</span><span>Conquistas</span><span>Top 10</span><span class="on">Sobre</span></nav>
+                <div class="ed-right"><span class="ed-pill">Lisboa</span><span style="font-size:12.5px;color:var(--app-ink-2)">Marta</span></div>
+              </header>
+              <main class="ed-main">
+                <div style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:52px">
+                  <div>
+                    <h1 class="ed-h1" style="max-width:14ch">Uma boa chávena. Uma nota honesta.</h1>
+                    <p class="ed-lede">O ranking é feito por quem prova. Nenhum café paga para aparecer e nenhuma nota editorial altera o resultado.</p>
+                    <span class="ms-btn primary" style="margin-top:18px">Explorar cafés</span>
+                  </div>
+                  <div>
+                    <div class="ms-sechead"><span>Nesta secção</span><span>6 páginas</span></div>
+                    <div class="ed-linkgrid">
+                      <span class="ms-linkcard">Como funciona</span>
+                      <span class="ms-linkcard">Privacidade</span>
+                      <span class="ms-linkcard">Top 10 de Lisboa</span>
+                      <span class="ms-linkcard">Contacto</span>
+                      <span class="ms-linkcard">Sugerir café</span>
+                      <span class="ms-linkcard">Entrar com Google</span>
+                    </div>
+                    <p class="sample" style="margin-top:16px">Dados do diretório: Overture Maps · Mapa: OpenFreeMap e OpenStreetMap</p>
+                  </div>
+                </div>
+              </main>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+
+      <figure style="margin:0">
+        <figcaption class="frame-label"><b>C</b><h3>Atlas</h3><span>leitura com índice lateral</span></figcaption>
+        <div class="frame-scroll">
+          <div class="d-frame">
+            <div class="at">
+              <aside class="at-side">
+                <div class="at-logo"><i></i>Flat White Me</div>
+                <nav class="at-nav">
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-search"/></svg>Explorar</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-heart"/></svg>Lista</div>
+                  <div class="at-row"><svg class="ms-ico"><use href="#i-star"/></svg>Conquistas</div>
+                  <div class="at-row on"><svg class="ms-ico"><use href="#i-info"/></svg>Sobre</div>
+                </nav>
+                <div class="at-foot"><span class="ms-city">Lisboa</span></div>
+              </aside>
+              <div class="at-wrap">
+                <div class="at-top"><span class="at-title">Sobre</span><span class="at-topright">Flat White Me</span></div>
+                <main class="at-main">
+                  <div class="at-split rev" style="grid-template-columns:minmax(0,1fr) 280px">
+                    <div class="at-panel">
+                      <h1 class="at-h1" style="font-size:30px">Uma boa chávena. Uma nota honesta.</h1>
+                      <p class="at-lede">O ranking é feito por quem prova. Nenhum café paga para aparecer e nenhuma nota editorial altera o resultado.</p>
+                      <div class="ms-linkgrid" style="max-width:none">
+                        <span class="ms-linkcard">Como funciona</span>
+                        <span class="ms-linkcard">Privacidade</span>
+                        <span class="ms-linkcard">Top 10 de Lisboa</span>
+                        <span class="ms-linkcard">Contacto</span>
+                        <span class="ms-linkcard">Sugerir café</span>
+                        <span class="ms-linkcard">Entrar com Google</span>
+                      </div>
+                      <p class="sample" style="margin-top:16px">Dados do diretório: Overture Maps · Mapa: OpenFreeMap e OpenStreetMap</p>
+                    </div>
+                    <div class="at-col">
+                      <div class="at-panel">
+                        <span class="ms-sechead" style="border-top:0;padding-top:0"><span>Nesta secção</span><span>6</span></span>
+                        <div class="at-index"><span>Como funciona</span><span>Privacidade</span><span>Top 10 de Lisboa</span><span>Contacto</span><span>Sugerir café</span><span>Entrar</span></div>
+                      </div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+            <div class="fade-b"></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>Escolhe uma direção (A, B ou C). A conquistas escolhe-se em separado, mobile e desktop. Depois implemento nos componentes reais, como fizemos com o telemóvel.</p>
+    <small>Método unslop, Damir Sokolovsky · CC BY 4.0</small>
+  </footer>
+</div>
+
+<script type="application/json" id="freguesias-data">{"w":700,"h":520,"polys":[{"name":"São Domingos de Benfica","d":"M315.9 178.3L316.3 190.2L335.0 206.6L350.5 230.9L330.4 239.2L350.0 249.6L364.4 249.3L370.9 257.6L358.6 262.1L332.9 257.5L327.9 254.5L321.1 245.9L311.1 252.2L308.7 256.4L302.1 255.5L299.9 256.6L297.1 258.0L295.3 268.0L294.3 277.3L256.3 266.9L240.4 259.2L240.2 257.2L243.3 253.2L242.6 251.1L235.2 247.6L227.9 247.7L223.5 236.0L225.3 235.7L227.4 215.1L234.2 202.1L242.6 193.2L256.4 184.4L273.7 178.7L291.1 176.9L315.9 178.3Z"},{"name":"Benfica","d":"M236.2 199.4L227.4 215.1L225.3 235.7L223.5 236.0L227.9 247.7L235.2 247.6L242.6 251.1L243.3 253.2L240.2 257.2L240.4 259.2L256.3 266.9L295.1 277.7L295.3 280.4L290.5 284.5L277.3 284.1L268.7 287.5L287.4 304.7L295.7 308.3L297.1 311.3L294.4 316.0L278.5 321.4L277.9 323.2L235.3 316.0L217.0 316.1L207.1 318.3L162.3 333.7L104.7 350.0L89.5 353.0L92.4 349.5L94.5 347.1L114.1 336.1L128.6 330.8L143.3 321.5L134.5 295.8L156.2 263.0L153.8 240.8L127.7 207.8L132.8 205.3L140.0 195.5L138.2 188.8L143.4 185.8L142.9 183.0L149.4 181.3L151.3 178.9L161.3 179.6L179.6 171.9L188.7 170.9L207.6 176.7L203.3 184.7L210.2 185.1L236.2 199.4Z"},{"name":"Marvila","d":"M616.4 185.1L654.6 195.9L654.9 196.0L672.3 199.4L657.1 246.2L646.7 270.4L646.9 285.3L645.7 288.0L614.5 278.7L612.5 277.1L614.1 271.4L612.5 271.1L611.4 270.9L611.8 270.1L612.2 269.1L605.5 267.5L604.8 266.6L602.2 263.9L595.3 278.0L590.8 275.6L587.9 277.9L570.0 272.3L567.4 268.1L561.1 267.4L558.5 264.1L551.4 261.3L550.1 257.3L533.1 242.4L508.5 229.6L498.2 217.6L494.5 215.8L496.5 213.3L493.2 212.6L495.9 211.4L499.8 212.8L500.8 211.6L497.8 204.6L494.6 203.9L499.8 164.2L498.8 164.1L498.4 157.4L501.6 156.0L501.4 153.7L519.4 157.1L616.4 185.1Z"},{"name":"Alvalade","d":"M501.4 153.7L501.6 156.0L498.4 157.4L498.8 164.1L499.8 164.2L494.6 203.9L497.8 204.6L500.8 211.6L499.8 212.8L495.9 211.4L493.2 212.6L496.7 214.0L493.1 218.0L492.9 227.5L425.0 231.4L421.2 232.1L415.9 233.1L412.0 217.4L374.6 223.0L350.5 230.9L335.0 206.6L316.3 190.2L315.9 178.3L340.5 178.2L424.5 156.5L445.7 153.7L501.4 153.7Z"},{"name":"Carnide","d":"M291.0 79.2L287.1 86.8L271.9 99.7L269.6 100.0L268.5 103.6L264.5 103.8L257.1 108.3L261.8 112.0L272.4 127.7L283.8 122.0L284.6 128.3L282.3 142.2L283.3 155.0L276.9 162.6L275.7 166.4L288.5 170.9L295.9 176.0L273.7 178.7L258.2 183.6L246.0 190.6L236.2 199.4L210.2 185.1L203.7 185.0L207.6 176.7L187.9 170.8L188.9 164.2L188.6 164.2L187.6 164.4L187.6 164.2L187.4 162.6L184.1 160.0L181.7 160.4L176.5 158.4L176.0 158.2L177.6 155.2L185.3 152.1L189.9 152.1L191.0 148.5L186.1 141.9L197.1 125.5L210.8 116.1L210.0 113.7L214.4 114.8L225.8 109.0L228.4 104.7L232.3 104.1L236.1 99.0L243.5 97.9L255.4 86.6L269.6 83.3L272.5 81.0L278.2 79.4L285.4 81.0L286.3 80.2L287.9 78.8L291.0 79.2Z"},{"name":"Estrela","d":"M385.7 360.2L389.4 365.3L392.1 372.9L391.2 373.7L388.7 375.7L388.2 375.4L387.4 375.0L407.0 449.6L385.2 449.2L359.8 445.1L334.5 455.1L310.8 459.2L293.2 459.9L287.9 431.7L287.8 431.0L287.9 430.4L292.4 429.7L290.1 420.1L290.0 419.5L296.9 398.3L298.0 388.7L291.3 373.4L301.0 372.5L299.8 366.4L304.6 357.9L316.8 360.3L322.5 371.7L337.6 370.5L338.3 366.6L342.7 358.9L342.5 358.8L341.8 358.7L352.5 355.2L356.0 358.7L365.6 357.7L367.7 358.6L369.2 359.3L372.0 360.5L370.9 363.5L385.7 360.2Z"},{"name":"Misericórdia","d":"M434.4 360.8L440.6 365.9L441.8 365.6L442.5 367.5L435.1 369.8L436.6 380.2L439.3 380.4L437.9 391.4L437.9 391.5L444.2 391.3L444.3 393.2L446.3 393.2L441.0 395.3L456.4 440.3L444.4 444.6L420.3 449.8L407.0 449.6L387.4 375.0L388.2 375.4L388.7 375.7L391.2 373.7L392.1 372.9L389.4 365.3L384.7 358.8L392.8 353.4L396.0 358.5L404.6 359.3L404.3 358.0L404.1 356.5L407.4 351.7L417.5 356.9L426.9 358.9L430.9 357.5L433.2 360.9L434.4 360.8Z"},{"name":"Santa Maria Maior","d":"M475.7 344.0L476.8 347.4L483.1 352.2L484.8 358.4L491.3 364.0L492.3 369.6L494.0 368.5L499.4 370.4L502.9 365.4L503.0 365.5L504.5 367.6L507.6 366.5L511.7 369.5L518.0 366.8L523.8 368.9L523.7 366.6L558.8 392.5L505.7 413.4L494.5 421.3L478.7 428.3L469.0 435.9L456.4 440.3L441.0 395.3L446.3 393.2L444.3 393.2L444.2 391.3L437.9 391.5L437.9 391.4L439.3 380.4L436.6 380.2L435.1 369.8L442.5 367.5L441.8 365.6L440.6 365.9L434.4 360.8L435.9 357.3L444.7 352.8L447.9 356.0L452.1 357.0L454.3 360.7L458.7 360.0L462.7 353.8L467.0 351.9L464.7 349.3L466.2 347.0L463.3 343.5L464.7 338.7L469.8 340.3L473.9 339.5L475.7 344.0Z"},{"name":"Belém","d":"M209.0 423.3L219.0 434.7L233.0 432.2L242.6 462.2L228.1 465.7L198.2 473.5L167.4 494.6L144.1 505.8L81.0 509.5L45.6 512.0L8.0 501.0L45.6 446.5L44.6 446.0L49.8 437.2L56.3 439.6L58.3 437.7L60.0 436.2L56.2 434.4L55.3 431.6L57.4 428.5L61.6 407.7L79.1 397.0L74.7 387.2L74.3 379.4L77.9 366.4L89.5 353.0L104.7 350.0L136.6 341.0L141.0 347.5L153.8 359.2L151.0 362.1L149.7 361.6L146.9 365.5L148.2 366.0L145.2 368.5L141.3 367.0L137.6 367.6L134.8 370.6L133.7 376.1L143.7 376.4L150.5 380.9L155.0 381.0L157.8 387.5L158.4 388.9L157.4 390.7L159.4 395.3L167.6 393.2L168.8 401.0L167.7 418.6L179.9 422.1L181.0 415.6L193.2 417.7L193.8 419.0L196.0 423.4L204.9 421.0L206.4 422.7L207.7 424.0L207.8 423.9L209.0 423.3Z"},{"name":"São Vicente","d":"M589.6 363.0L579.1 375.0L568.8 385.8L558.8 392.5L523.7 366.6L523.8 368.9L518.0 366.8L511.7 369.5L507.6 366.5L504.5 367.6L503.0 365.5L502.9 365.4L499.4 370.4L494.0 368.5L492.3 369.6L491.3 364.0L484.8 358.4L483.1 352.2L476.8 347.4L475.7 344.0L478.7 345.0L481.4 339.8L486.5 336.6L488.4 330.1L484.2 327.0L487.3 325.1L492.4 332.1L496.5 333.4L499.0 328.8L500.5 328.9L500.6 328.9L501.0 325.5L505.1 324.5L505.9 323.8L506.5 322.8L507.8 323.7L510.9 325.7L533.2 327.3L589.6 363.0Z"},{"name":"Campo de Ourique","d":"M384.7 358.8L385.7 360.2L384.2 360.9L370.9 363.5L372.0 360.5L369.2 359.3L367.7 358.6L365.6 357.7L356.0 358.7L352.5 355.2L341.8 358.7L342.5 358.8L342.7 358.9L338.3 366.6L337.6 370.5L322.5 371.7L316.8 360.3L305.0 357.6L299.8 366.4L301.0 372.5L291.3 373.4L287.7 364.1L292.5 346.2L290.1 332.5L292.4 326.5L310.7 329.4L356.8 321.0L372.6 330.1L379.3 336.8L379.6 346.2L384.7 358.8Z"},{"name":"Ajuda","d":"M209.0 423.3L207.8 423.9L207.7 424.0L206.4 422.7L204.9 421.0L196.0 423.4L193.8 419.0L193.2 417.7L181.0 415.6L179.9 422.1L167.7 418.6L168.8 401.0L167.6 393.2L159.4 395.3L157.4 390.7L158.4 388.9L157.8 387.5L155.0 381.0L150.5 380.9L143.7 376.4L133.7 376.1L134.8 370.6L137.6 367.6L141.3 367.0L145.2 368.5L148.2 366.0L146.9 365.5L149.7 361.6L151.0 362.1L153.8 359.2L141.0 347.5L136.6 341.0L163.4 333.4L205.6 318.8L207.4 344.0L206.5 349.9L205.7 355.9L207.3 355.9L210.6 355.9L211.0 366.8L210.1 366.8L210.9 368.8L211.7 370.6L214.8 375.9L225.2 380.7L230.0 387.0L241.7 395.0L228.2 392.3L229.2 394.5L227.5 399.7L218.0 410.5L215.5 420.0L209.0 423.3Z"},{"name":"Alcântara","d":"M277.9 323.2L292.4 326.5L289.9 334.2L292.5 346.2L287.7 364.9L298.0 388.7L296.9 398.3L290.0 419.5L290.1 420.1L292.4 429.7L287.9 430.4L287.8 431.0L287.9 431.7L293.2 459.9L280.2 460.4L256.1 459.0L242.6 462.2L233.0 432.2L219.0 434.7L209.0 423.3L215.5 420.0L218.0 410.5L227.5 399.7L229.2 394.5L228.2 392.3L241.7 395.0L230.0 387.0L225.2 380.7L214.8 375.9L211.7 370.6L210.9 368.8L210.1 366.8L211.0 366.8L210.6 355.9L207.3 355.9L205.7 355.9L206.5 349.9L207.4 344.0L205.6 318.8L217.0 316.1L232.4 315.7L277.9 323.2Z"},{"name":"Santo António","d":"M444.7 352.8L435.9 357.3L434.4 360.8L433.2 360.9L430.9 357.5L426.9 358.9L417.5 356.9L407.4 351.7L404.1 356.5L404.3 358.0L404.6 359.3L396.0 358.5L392.8 353.4L384.7 358.8L379.6 346.2L379.3 336.8L372.6 330.1L356.8 321.0L371.0 318.7L404.6 316.7L413.2 303.4L414.9 304.8L418.2 304.7L426.8 302.9L437.0 313.7L433.8 314.7L434.3 315.5L433.8 316.5L440.9 321.5L441.2 324.2L438.8 325.3L438.6 325.4L446.4 329.3L441.4 336.7L448.4 338.3L445.8 340.9L448.2 345.2L445.6 347.8L441.4 348.9L444.7 352.8Z"},{"name":"Arroios","d":"M487.3 325.1L484.2 327.0L488.4 330.1L486.7 336.3L481.4 339.8L478.7 345.0L475.3 343.6L473.9 339.5L469.8 340.3L464.7 338.7L463.3 343.5L466.2 347.0L464.7 349.3L467.0 351.9L462.8 353.7L459.4 359.3L457.0 360.7L454.3 360.7L450.8 355.9L447.9 356.0L441.4 348.9L445.6 347.8L448.2 345.2L445.8 340.9L448.4 338.3L441.4 336.7L446.4 329.3L438.6 325.4L438.8 325.3L441.2 324.2L440.9 321.5L433.8 316.5L434.3 315.5L433.8 314.7L437.0 313.7L426.8 302.9L418.2 304.7L414.9 304.8L413.2 303.4L428.1 280.1L426.7 274.1L457.2 273.2L464.9 270.2L465.5 266.5L489.6 265.1L489.2 279.7L480.9 295.9L482.1 295.3L481.0 300.0L482.3 302.6L492.3 305.7L494.0 311.6L487.3 325.1Z"},{"name":"Penha de França","d":"M608.6 337.1L605.2 339.7L598.0 353.5L589.6 363.0L533.2 327.3L510.9 325.7L507.8 323.7L506.5 322.8L505.9 323.8L505.1 324.5L501.0 325.5L500.6 328.9L500.5 328.9L499.0 328.8L496.5 333.4L492.6 332.3L487.0 324.0L493.6 312.8L492.3 305.7L482.3 302.6L481.0 300.0L482.1 295.3L480.9 295.9L489.2 279.7L489.6 265.1L501.4 264.5L510.9 262.3L516.2 270.7L530.9 281.9L538.6 284.2L552.9 284.4L554.2 291.0L562.0 300.7L565.8 311.3L584.8 321.5L585.0 321.6L608.6 337.1Z"},{"name":"Beato","d":"M645.7 288.0L638.9 304.4L631.4 318.4L620.6 328.1L608.6 337.1L585.0 321.6L584.8 321.5L565.8 311.3L562.0 300.7L554.2 291.0L552.9 284.4L538.6 284.2L530.9 281.9L516.2 270.7L510.9 262.3L525.6 257.7L522.5 255.0L522.5 251.6L524.5 250.2L533.5 250.5L539.6 248.0L550.1 257.3L551.4 261.3L558.5 264.1L561.1 267.4L567.4 268.1L570.0 272.3L587.9 277.9L590.8 275.6L595.3 278.0L602.2 263.9L604.8 266.6L605.5 267.5L612.2 269.1L611.8 270.1L611.4 270.9L612.5 271.1L614.1 271.4L612.5 277.1L614.5 278.7L645.7 288.0Z"},{"name":"Campolide","d":"M369.9 258.0L371.7 259.8L375.8 264.1L371.1 265.6L367.5 276.3L363.8 277.7L363.1 279.7L363.6 280.6L366.6 279.4L380.1 289.2L359.6 303.1L376.0 318.4L309.0 329.5L277.9 323.2L278.5 321.4L293.4 316.9L297.1 310.5L295.2 307.7L287.4 304.7L268.7 287.5L277.9 284.0L289.2 284.9L293.7 282.2L295.9 279.5L294.3 277.3L295.3 268.0L297.1 258.0L299.9 256.6L302.1 255.5L308.7 256.4L311.1 252.2L321.1 245.9L327.9 254.5L332.9 257.5L358.6 262.1L369.9 258.0Z"},{"name":"Avenidas Novas","d":"M425.0 231.4L441.3 256.6L438.9 257.2L438.9 257.3L442.6 273.7L426.7 274.1L428.1 280.1L404.6 316.7L376.0 318.4L359.6 303.1L380.1 289.2L366.6 279.4L363.6 280.6L363.1 279.7L363.8 277.7L367.5 276.3L371.1 265.6L375.8 264.1L371.7 259.8L369.9 258.0L370.9 257.6L364.4 249.3L350.0 249.6L330.4 239.2L369.5 224.3L412.0 217.4L415.9 233.1L421.2 232.1L425.0 231.4Z"},{"name":"Areeiro","d":"M539.6 248.0L533.5 250.5L524.0 250.5L523.4 250.8L522.5 251.6L522.5 255.0L525.6 257.7L517.9 260.7L501.4 264.5L465.5 266.5L464.9 270.2L458.5 272.9L442.6 273.7L438.9 257.3L438.9 257.2L441.3 256.6L425.0 231.4L492.9 227.5L493.1 218.0L494.8 215.8L498.2 217.6L508.5 229.6L528.1 239.3L539.6 248.0Z"},{"name":"Lumiar","d":"M441.7 90.2L422.8 111.6L415.7 127.7L415.6 129.8L415.8 131.7L420.7 144.3L417.5 153.6L418.9 157.7L340.5 178.2L291.1 176.9L295.9 176.0L288.5 170.9L275.7 166.4L276.9 162.6L283.3 155.0L282.3 142.2L284.6 128.3L283.9 122.4L283.3 121.5L272.4 127.7L261.8 112.0L257.1 108.3L264.5 103.8L268.5 103.6L269.6 100.0L271.9 99.7L287.1 86.8L291.0 79.2L296.9 77.9L298.7 74.9L298.6 73.3L298.4 71.7L299.9 71.4L300.0 72.0L304.6 68.6L309.1 67.9L310.6 65.3L313.5 64.5L316.1 57.6L317.8 56.3L335.7 68.0L339.8 67.5L346.0 63.3L348.1 63.7L348.2 65.3L343.6 67.8L346.3 77.8L343.9 86.4L345.1 86.4L346.3 83.1L359.9 86.3L359.4 90.9L361.4 95.6L366.6 92.3L368.4 91.2L371.6 92.9L372.0 92.9L377.0 92.9L378.3 86.1L383.1 83.8L390.8 85.1L395.9 89.4L414.4 93.9L415.7 90.8L415.8 90.4L429.7 96.5L432.4 90.6L433.4 88.3L441.7 90.2Z"},{"name":"Olivais","d":"M607.5 102.4L616.4 185.1L509.1 154.7L445.7 153.7L418.9 157.7L417.5 153.6L420.7 144.3L415.6 129.8L419.9 116.6L424.1 110.0L450.0 80.8L456.0 71.1L456.0 61.7L450.9 51.0L469.5 58.2L500.5 63.2L513.7 67.4L522.3 68.2L526.7 67.1L530.9 65.9L532.9 69.0L538.6 69.2L542.0 71.5L571.2 80.0L579.8 85.2L585.0 92.3L600.3 102.5L607.5 102.4Z"},{"name":"Santa Clara","d":"M450.9 51.0L456.0 61.7L456.0 71.1L450.0 80.8L441.7 90.2L433.4 88.3L432.4 90.6L429.7 96.5L415.8 90.4L415.7 90.8L414.4 93.9L398.7 90.2L390.8 85.1L384.6 83.8L380.4 84.4L378.3 86.1L377.0 92.9L372.0 92.9L371.6 92.9L368.4 91.2L366.6 92.3L361.4 95.6L359.4 90.9L359.9 86.3L346.3 83.1L345.1 86.4L343.9 86.4L346.3 77.8L343.6 67.8L348.2 65.3L348.1 63.7L346.0 63.3L339.8 67.5L335.7 68.0L317.8 56.3L320.6 54.7L324.4 54.5L326.8 54.3L327.5 52.9L334.9 53.6L335.5 51.8L342.3 48.1L343.1 45.4L351.9 42.5L355.7 39.0L356.0 37.4L356.1 37.0L361.2 34.2L363.0 30.1L375.7 20.4L381.5 21.2L384.7 17.6L392.1 18.6L398.2 14.3L398.3 13.0L398.4 12.8L405.3 11.9L411.0 16.6L422.3 19.4L425.5 29.2L422.8 30.6L426.9 45.2L438.5 43.6L444.7 49.3L450.9 51.0Z"},{"name":"Parque das Nações","d":"M672.3 199.4L654.9 196.0L654.6 195.9L616.4 185.1L607.5 102.4L634.3 101.0L625.7 40.0L627.0 29.7L633.1 9.7L638.6 10.8L650.1 8.0L665.0 10.5L692.0 10.3L688.4 24.5L685.9 41.7L680.1 104.5L678.1 109.3L675.4 139.5L675.4 190.1L672.3 199.4Z"}]}</script>
+
+<script>
+  (function () {
+    var el = document.getElementById('freguesias-data');
+    var data = JSON.parse(el.textContent);
+    var stats = {
+      'São Domingos de Benfica': [4, 9], 'Benfica': [2, 12], 'Marvila': [0, 6], 'Alvalade': [5, 14],
+      'Carnide': [1, 5], 'Estrela': [6, 6], 'Misericórdia': [8, 12], 'Santa Maria Maior': [3, 18],
+      'Belém': [2, 8], 'São Vicente': [4, 10], 'Campo de Ourique': [7, 11], 'Ajuda': [0, 4],
+      'Alcântara': [1, 7], 'Santo António': [12, 12], 'Arroios': [9, 22], 'Penha de França': [2, 9],
+      'Beato': [0, 5], 'Campolide': [1, 6], 'Avenidas Novas': [6, 16], 'Areeiro': [10, 10],
+      'Lumiar': [3, 13], 'Olivais': [1, 9], 'Santa Clara': [0, 3], 'Parque das Nações': [2, 7]
+    };
+
+    function color(pct) {
+      if (pct >= 100) return '#b4532a';
+      if (pct >= 50) return '#cf8a63';
+      if (pct > 0) return '#e3b59a';
+      return '#efe6da';
+    }
+
+    document.querySelectorAll('[data-freg-map]').forEach(function (host) {
+      var ns = 'http://www.w3.org/2000/svg';
+      var svg = document.createElementNS(ns, 'svg');
+      svg.setAttribute('viewBox', '0 0 ' + data.w + ' ' + data.h);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      data.polys.forEach(function (poly) {
+        var s = stats[poly.name] || [0, 1];
+        var pct = s[1] ? Math.min(100, Math.round((s[0] / s[1]) * 100)) : 0;
+        var path = document.createElementNS(ns, 'path');
+        path.setAttribute('d', poly.d);
+        path.setAttribute('fill', color(pct));
+        path.setAttribute('stroke', '#faf7f2');
+        path.setAttribute('stroke-width', '1.4');
+        var title = document.createElementNS(ns, 'title');
+        title.textContent = poly.name + ' · ' + s[0] + ' de ' + s[1] + ' cafés';
+        path.appendChild(title);
+        svg.appendChild(path);
+      });
+      host.appendChild(svg);
+    });
+  })();
+</script>

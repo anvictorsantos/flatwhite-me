@@ -1,0 +1,18 @@
+{
+  "release": "2026-10-21.0",
+  "source": "overturemaps-us-west-2/theme=places/type=place",
+  "bbox": [-9.2294, 38.6916, -9.0856, 38.796],
+  "categories": ["cafe", "coffee_shop"],
+  "rawCandidates": 1234,
+  "duplicatesDropped": 3,
+  "kept": 1231,
+  "byCategory": { "cafe": 518, "coffeeShop": 713 },
+  "firstRun": { "inserted": 1231, "updated": 0, "markedPossiblyClosed": 0 },
+  "secondRun": { "inserted": 0, "updated": 1231, "markedPossiblyClosed": 0 },
+  "database": { "activeCafes": 1231, "uniqueSlugs": 1231 },
+  "notes": [
+    "Deduplicated by Overture id and by normalized name within 100 m, keeping the highest confidence row.",
+    "operating_status is unknown for every imported row in this bbox, matching ADR 0003; no café was marked possibly closed.",
+    "Ranking view verified in a rolled-back transaction: one 5/4/3/4 rating scores 4.3000."
+  ]
+}

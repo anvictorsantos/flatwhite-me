@@ -1,0 +1,9 @@
+.next
+node_modules
+generated
+public
+FlatWhiteMe
+docs
+test-results
+playwright-report
+package-lock.json

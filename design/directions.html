@@ -1,0 +1,1327 @@
+<title>Direções Flat White Me</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --board-bg: #171310;
+    --board-surface: #211b16;
+    --board-line: #372d25;
+    --board-text: #f3ede5;
+    --board-muted: #a2968a;
+    --board-accent: #cf6a3d;
+
+    --app-bg: #faf7f2;
+    --app-surface: #ffffff;
+    --app-muted: #f1eae0;
+    --app-ink: #241a14;
+    --app-ink-2: #6b5b50;
+    --app-line: #e3d9cc;
+    --terra: #b4532a;
+    --terra-text: #9c431f;
+    --success: #2f6b4f;
+
+    --font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    background: var(--board-bg);
+    color: var(--board-text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    background: var(--board-bg);
+    z-index: 60;
+  }
+
+  .board { max-width: 1200px; margin: 0 auto; }
+
+  .head { padding: 56px 0 0; }
+
+  .wordmark {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .wordmark i {
+    width: 9px; height: 9px; border-radius: 2px;
+    background: var(--board-accent); display: block;
+  }
+
+  .kicker {
+    margin: 22px 0 0;
+    font-size: 12px; color: var(--board-muted);
+  }
+
+  h1 {
+    margin: 10px 0 0;
+    font-size: clamp(30px, 4.8vw, 46px);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    max-width: 18ch;
+  }
+
+  .intro {
+    margin: 16px 0 0;
+    max-width: 62ch;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--board-muted);
+  }
+
+  .directions {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 34px;
+    background: var(--board-line);
+    border: 1px solid var(--board-line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .direction {
+    background: var(--board-surface);
+    padding: 16px;
+    min-width: 0;
+  }
+  .direction-top { display: flex; align-items: baseline; gap: 8px; }
+  .letter {
+    font-size: 11px; font-weight: 600; color: var(--board-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .direction h2 {
+    margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .direction p {
+    margin: 7px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--board-muted);
+  }
+
+  .tabs {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 30;
+    display: flex;
+    gap: 4px;
+    margin-top: 40px;
+    padding: 10px 0;
+    background: var(--board-bg);
+    border-bottom: 1px solid var(--board-line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button {
+    flex: none;
+    appearance: none;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--board-muted);
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 8px 13px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+  }
+  .tabs button:hover { color: var(--board-text); background: var(--board-surface); }
+  .tabs button[aria-selected="true"] {
+    color: var(--board-text);
+    background: var(--board-surface);
+    border-color: var(--board-line);
+  }
+  .tabs button:focus-visible {
+    outline: 2px solid var(--board-accent);
+    outline-offset: 2px;
+  }
+
+  .panel { padding: 28px 0 12px; }
+
+  .variants {
+    display: grid;
+    grid-template-columns: repeat(3, 340px);
+    gap: 28px;
+    justify-content: center;
+    align-items: start;
+  }
+
+  .variant { margin: 0; min-width: 0; }
+  .v-head { display: grid; gap: 4px; min-height: 76px; align-content: start; }
+  .v-title { display: flex; align-items: baseline; gap: 8px; }
+  .v-title .letter { font-size: 11px; }
+  .v-title h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.015em; }
+  .v-title span.note { font-size: 11px; color: var(--board-muted); }
+  .v-head p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--board-muted); max-width: 34ch; }
+
+  .phone {
+    width: 100%;
+    max-width: 340px;
+    margin: 10px auto 0;
+    padding: 7px;
+    border-radius: 38px;
+    border: 1px solid #3b3129;
+    background: #0b0806;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+  }
+
+  .screen {
+    position: relative;
+    height: 700px;
+    border-radius: 31px;
+    overflow: hidden;
+    background: var(--app-bg);
+    color: var(--app-ink);
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .status {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px 0;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--app-ink);
+  }
+  .status-r { display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 600; }
+  .batt {
+    width: 15px; height: 8px; border: 1px solid currentColor; border-radius: 2px;
+    position: relative; display: block;
+  }
+  .batt::after {
+    content: ""; position: absolute; inset: 1px; width: 9px;
+    background: currentColor; border-radius: 1px;
+  }
+
+  .scroll {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .fade {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 54px;
+    background: linear-gradient(to bottom, rgba(250, 247, 242, 0), var(--app-bg));
+    pointer-events: none;
+  }
+
+  .tabbar {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 5px 6px 9px;
+    border-top: 1px solid var(--app-line);
+    background: var(--app-surface);
+    color: var(--app-ink-2);
+  }
+  .tab {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    font-size: 9.5px; font-weight: 500; padding: 4px 2px;
+    border-radius: 9px;
+  }
+  .tab svg { width: 19px; height: 19px; }
+  .tabbar-a .tab.on { color: var(--app-ink); font-weight: 600; }
+  .tabbar-a .tab.on svg { color: var(--terra-text); }
+  .tabbar-b .tab.on { background: var(--app-muted); color: var(--terra-text); }
+  .tabbar-c .tab.on { color: var(--app-ink); font-weight: 600; box-shadow: inset 0 2px 0 var(--terra); }
+
+  .i {
+    width: 18px; height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex: none;
+  }
+
+  .map-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Direction A — Balcão */
+  .a-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 8px; flex: none; }
+  .a-brand { font-size: 14px; font-weight: 600; letter-spacing: -0.015em; }
+  .a-city { font-size: 11px; color: var(--app-ink-2); border-bottom: 1px solid var(--app-line); padding-bottom: 1px; }
+  .a-bar.mid { display: grid; grid-template-columns: 32px 1fr 32px; align-items: center; padding: 8px 16px 6px; }
+  .a-bar.mid .a-title { text-align: center; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .a-iconbtn { width: 30px; height: 30px; display: grid; place-items: center; color: var(--app-ink); }
+
+  .a-body { padding: 0 16px 16px; display: grid; gap: 14px; }
+  .a-h1 { margin: 6px 0 0; font-size: 26px; line-height: 1.08; font-weight: 600; letter-spacing: -0.03em; text-wrap: balance; }
+  .a-lede { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--app-ink-2); }
+  .a-search { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--app-ink); padding: 8px 0; font-size: 12.5px; color: var(--app-ink-2); }
+  .a-chips { display: flex; gap: 14px; font-size: 11.5px; color: var(--app-ink-2); }
+  .a-chips span { border-bottom: 1px solid var(--app-line); padding-bottom: 2px; }
+  .a-sechead { display: flex; align-items: baseline; justify-content: space-between; border-top: 1px solid var(--app-ink); padding-top: 8px; font-size: 12px; font-weight: 600; }
+  .a-sechead span:last-child { font-size: 11px; font-weight: 400; color: var(--app-ink-2); }
+  .a-list { display: grid; }
+  .a-row { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--app-line); }
+  .a-rank { font-size: 10.5px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .a-rank.top { color: var(--terra-text); font-weight: 600; }
+  .a-name { font-size: 14px; font-weight: 500; line-height: 1.2; letter-spacing: -0.01em; }
+  .a-area { font-size: 11px; color: var(--app-ink-2); margin-top: 2px; }
+  .a-score { text-align: right; }
+  .a-score b { display: block; font-size: 19px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .a-score span { display: block; font-size: 10px; color: var(--app-ink-2); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .a-empty { font-size: 12px; color: var(--app-ink-2); padding: 8px 0; }
+
+  .a-cafehead { padding: 4px 16px 0; }
+  .a-kicker { font-size: 11px; color: var(--app-ink-2); }
+  .a-h1-cafe { margin: 4px 0 0; font-size: 27px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.05; }
+  .a-scoreblock { margin: 14px 16px 0; border-top: 1px solid var(--app-ink); border-bottom: 1px solid var(--app-line); padding: 12px 0 10px; display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+  .a-big { font-size: 56px; line-height: 0.84; font-weight: 600; letter-spacing: -0.045em; color: var(--terra-text); font-variant-numeric: tabular-nums; }
+  .a-of { font-size: 12px; color: var(--app-ink-2); margin-left: 5px; }
+  .a-stat { text-align: right; font-size: 10.5px; line-height: 1.55; color: var(--app-ink-2); }
+  .a-stat b { display: block; font-size: 11px; color: var(--success); font-weight: 600; }
+  .a-dims { padding: 14px 16px 0; display: grid; gap: 10px; }
+  .a-dim-top { display: flex; align-items: baseline; justify-content: space-between; font-size: 11.5px; }
+  .a-dim-top b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .a-dimbar { height: 3px; background: var(--app-muted); margin-top: 5px; }
+  .a-dimbar i { display: block; height: 100%; background: var(--app-ink); }
+  .a-actions { padding: 16px 16px 0; display: grid; gap: 8px; }
+  .a-btn { height: 44px; display: flex; align-items: center; justify-content: center; gap: 7px; border-radius: 6px; font-size: 13px; font-weight: 600; }
+  .a-btn.primary { background: var(--app-ink); color: var(--app-bg); }
+  .a-btn.ghost { border: 1px solid var(--app-line); color: var(--app-ink); background: transparent; }
+  .a-notes { padding: 18px 16px 0; }
+  .a-note { border-left: 2px solid var(--app-line); padding-left: 10px; font-size: 12px; line-height: 1.5; }
+  .a-note small { display: block; margin-top: 5px; font-size: 10.5px; color: var(--app-ink-2); }
+
+  .a-map { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+  .a-map .pin { border-radius: 999px; background: #fcebdb; color: #331004; border: 1px solid #e6c6ab; width: 30px; height: 30px; font-size: 10px; font-weight: 600; }
+  .a-map .pin.sel { background: var(--app-ink); color: var(--app-bg); border-color: var(--app-ink); width: 34px; height: 34px; font-size: 11px; }
+  .a-map .pin.raw { width: 11px; height: 11px; background: var(--app-surface); border: 1.5px solid var(--app-ink-2); border-radius: 2px; }
+  .a-sheet { position: relative; z-index: 2; flex: none; border-top: 1px solid var(--app-line); background: var(--app-surface); padding: 7px 16px 12px; }
+  .handle { width: 34px; height: 3px; border-radius: 2px; background: var(--app-line); margin: 0 auto 9px; }
+  .a-sheet-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; color: var(--app-ink-2); margin-bottom: 2px; }
+  .a-sheet-head b { color: var(--app-ink); font-weight: 600; }
+  .a-sheet .a-row { padding: 8px 0; }
+  .a-sheet .a-score b { font-size: 16px; }
+  .a-link { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: var(--terra-text); margin-top: 8px; }
+
+  .a-modal-wrap { position: absolute; inset: 0; background: rgba(36, 26, 20, 0.3); }
+  .a-modal { position: absolute; left: 0; right: 0; bottom: 0; top: 64px; background: var(--app-surface); border-radius: 18px 18px 0 0; border-top: 1px solid var(--app-line); padding: 9px 16px 14px; display: flex; flex-direction: column; gap: 11px; overflow: hidden; }
+  .a-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .a-modal-head h2 { margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+  .a-modal-head p { margin: 2px 0 0; font-size: 11px; color: var(--app-ink-2); }
+  .a-field { display: grid; gap: 5px; }
+  .a-field > span { font-size: 10.5px; color: var(--app-ink-2); }
+  .a-scale { display: flex; gap: 5px; }
+  .a-scale span { width: 27px; height: 27px; border: 1px solid var(--app-line); border-radius: 4px; display: grid; place-items: center; font-size: 11px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .a-scale span.on { background: var(--terra); border-color: var(--terra); color: #fff; font-weight: 600; }
+  .a-line { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--app-ink); padding: 5px 0 6px; font-size: 12px; }
+  .a-line b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .a-seg { display: flex; gap: 4px; flex-wrap: wrap; }
+  .a-seg span { border: 1px solid var(--app-line); border-radius: 4px; padding: 5px 8px; font-size: 11px; color: var(--app-ink-2); }
+  .a-seg span.on { border-color: var(--app-ink); background: var(--app-ink); color: var(--app-bg); }
+  .a-submit { margin-top: auto; height: 44px; border-radius: 6px; background: var(--terra); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+
+  /* Direction B — Cafés de bairro */
+  .b-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px 8px; flex: none; }
+  .b-brand { display: flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; letter-spacing: -0.015em; flex: 1; }
+  .b-brand i { width: 8px; height: 8px; border-radius: 2px; background: var(--terra); }
+  .b-pill { font-size: 10.5px; background: var(--app-muted); border-radius: 999px; padding: 5px 10px; color: var(--app-ink-2); font-weight: 500; }
+  .b-bar.mid { display: grid; grid-template-columns: 32px 1fr 32px; align-items: center; padding: 8px 16px 6px; }
+  .b-bar.mid .b-title { text-align: center; font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .b-iconbtn { width: 30px; height: 30px; display: grid; place-items: center; color: var(--app-ink); }
+
+  .b-body { padding: 0 16px 16px; display: grid; gap: 12px; }
+  .b-h1 { margin: 6px 0 0; font-size: 24px; line-height: 1.1; font-weight: 600; letter-spacing: -0.028em; text-wrap: balance; }
+  .b-lede { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--app-ink-2); }
+  .b-search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--app-line); background: var(--app-surface); border-radius: 10px; padding: 9px 11px; font-size: 12.5px; color: var(--app-ink-2); }
+  .b-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .b-btn { height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12.5px; font-weight: 600; }
+  .b-btn.primary { background: var(--terra); color: #fff; }
+  .b-btn.secondary { border: 1px solid var(--app-line); background: var(--app-surface); color: var(--app-ink); }
+  .b-chips { display: flex; gap: 6px; overflow: hidden; }
+  .b-chip { flex: none; border: 1px solid var(--app-line); background: var(--app-surface); border-radius: 999px; padding: 6px 10px; font-size: 10.5px; font-weight: 500; color: var(--app-ink); }
+  .b-mapcard { position: relative; height: 104px; border-radius: 16px; overflow: hidden; border: 1px solid var(--app-line); background: #ede5d8; }
+  .b-mapcard .map-svg { position: absolute; }
+  .b-mapcard .pin { width: 25px; height: 25px; border-radius: 999px; background: var(--terra); color: #fff; font-size: 9px; font-weight: 600; box-shadow: 0 1px 3px rgba(36, 26, 20, 0.2); }
+  .b-mapcard .pin.sel { width: 31px; height: 31px; background: var(--app-ink); font-size: 10px; border: 2px solid var(--app-surface); }
+  .b-mapmeta { position: absolute; left: 9px; bottom: 9px; display: flex; align-items: center; gap: 5px; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 8px; padding: 5px 8px; font-size: 10.5px; font-weight: 500; }
+  .b-mapmeta svg { width: 13px; height: 13px; color: var(--terra-text); }
+  .b-sechead { display: flex; align-items: baseline; justify-content: space-between; padding-top: 2px; }
+  .b-sechead h3 { margin: 0; font-size: 14px; font-weight: 600; letter-spacing: -0.015em; }
+  .b-sechead span { font-size: 10.5px; color: var(--app-ink-2); }
+  .b-card { background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 16px; padding: 13px; display: grid; gap: 10px; }
+  .b-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .b-name { font-size: 16px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+  .b-area { font-size: 11px; color: var(--app-ink-2); margin-top: 3px; }
+  .b-save { width: 36px; height: 36px; flex: none; border-radius: 10px; background: var(--app-muted); display: grid; place-items: center; color: var(--app-ink-2); }
+  .b-save svg { width: 17px; height: 17px; }
+  .b-scoreline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .b-badge { display: inline-flex; align-items: baseline; gap: 3px; background: #f7e7da; color: var(--terra-text); border-radius: 999px; padding: 4px 10px; font-size: 19px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .b-badge small { font-size: 9.5px; font-weight: 500; letter-spacing: 0; }
+  .b-sample { font-size: 10.5px; color: var(--app-ink-2); }
+  .b-status { font-size: 10.5px; font-weight: 600; color: var(--success); }
+  .b-cardmeta { font-size: 11px; color: var(--app-ink-2); }
+  .b-cardbtn { height: 36px; border: 1px solid var(--app-line); border-radius: 10px; background: var(--app-surface); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--app-ink); }
+
+  .b-cafehead { padding: 4px 16px 0; }
+  .b-caffeine { display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: var(--app-ink-2); }
+  .b-tag { border: 1px solid var(--app-line); border-radius: 999px; padding: 3px 7px; font-size: 9.5px; font-weight: 500; color: var(--app-ink-2); }
+  .b-h1-cafe { margin: 5px 0 0; font-size: 27px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.04; }
+  .b-scorecard { margin: 13px 16px 0; background: var(--app-surface); border: 1px solid var(--app-line); border-radius: 16px; padding: 14px; display: grid; gap: 9px; }
+  .b-scorecard-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .b-scorecard .b-badge { font-size: 27px; padding: 5px 13px; }
+  .b-scorecard .b-badge small { font-size: 11px; }
+  .b-scorecard p { margin: 0; font-size: 11px; color: var(--app-ink-2); line-height: 1.5; }
+  .b-scorecard p b { color: var(--app-ink); font-weight: 600; }
+  .b-dims { padding: 15px 16px 0; display: grid; gap: 11px; }
+  .b-dim-top { display: flex; align-items: baseline; justify-content: space-between; font-size: 11.5px; margin-bottom: 5px; }
+  .b-dim-top b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .b-dimbar { height: 6px; border-radius: 999px; background: var(--app-muted); overflow: hidden; }
+  .b-dimbar i { display: block; height: 100%; border-radius: 999px; background: var(--terra); }
+  .b-facts { margin: 14px 16px 0; display: flex; gap: 6px; flex-wrap: wrap; }
+  .b-fact { background: var(--app-muted); border-radius: 8px; padding: 6px 9px; font-size: 10.5px; color: var(--app-ink-2); }
+  .b-fact b { color: var(--app-ink); font-weight: 600; }
+  .b-actions-cafe { margin: 13px 16px 0; display: grid; gap: 8px; }
+  .b-notes { padding: 17px 16px 0; display: grid; gap: 8px; }
+  .b-note { background: var(--app-muted); border-radius: 12px; padding: 11px; }
+  .b-note p { margin: 0; font-size: 11.5px; line-height: 1.5; }
+  .b-note-meta { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 10px; color: var(--app-ink-2); }
+  .b-avatar { width: 20px; height: 20px; border-radius: 999px; background: var(--app-surface); display: grid; place-items: center; font-size: 9px; font-weight: 600; color: var(--terra-text); }
+
+  .b-map { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+  .b-map .pin { border-radius: 999px; background: var(--terra); color: #fff; width: 32px; height: 32px; font-size: 10.5px; font-weight: 600; box-shadow: 0 1px 3px rgba(36, 26, 20, 0.25); }
+  .b-map .pin.sel { width: 42px; height: 42px; background: var(--app-ink); font-size: 12px; border: 3px solid var(--app-surface); }
+  .b-map .pin.raw { width: 12px; height: 12px; background: var(--app-surface); border: 2px solid var(--terra); box-shadow: none; }
+  .b-float { position: absolute; left: 12px; right: 12px; top: 10px; z-index: 2; display: grid; gap: 8px; }
+  .b-float .b-search { box-shadow: 0 2px 8px rgba(36, 26, 20, 0.12); }
+  .b-float-chips { display: flex; gap: 6px; }
+  .b-float-chips .b-chip { box-shadow: 0 1px 4px rgba(36, 26, 20, 0.1); }
+  .b-locate { position: absolute; right: 12px; bottom: 176px; z-index: 2; width: 40px; height: 40px; border-radius: 999px; background: var(--app-surface); border: 1px solid var(--app-line); display: grid; place-items: center; color: var(--app-ink); box-shadow: 0 2px 8px rgba(36, 26, 20, 0.14); }
+  .b-carousel { position: relative; z-index: 2; flex: none; background: var(--app-surface); border-top: 1px solid var(--app-line); padding: 10px 14px 12px; }
+  .b-carousel-card { display: grid; gap: 9px; }
+  .b-carousel-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .b-carousel .b-name { font-size: 15px; }
+
+  .b-podium { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: end; margin-top: 4px; }
+  .b-pod { border: 1px solid var(--app-line); border-radius: 14px; background: var(--app-surface); padding: 10px 9px; display: grid; gap: 5px; }
+  .b-pod.first { background: #fcebdb; border-color: #e6c6ab; padding: 13px 10px; }
+  .b-pod-rank { font-size: 10px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .b-pod-name { font-size: 11.5px; font-weight: 600; line-height: 1.2; letter-spacing: -0.01em; }
+  .b-pod-score { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+  .b-pod-score small { font-size: 9.5px; color: var(--app-ink-2); font-weight: 500; letter-spacing: 0; }
+  .b-pod-n { font-size: 9.5px; color: var(--app-ink-2); }
+
+  .b-modal-wrap { position: absolute; inset: 0; background: rgba(36, 26, 20, 0.3); }
+  .b-modal { position: absolute; left: 0; right: 0; bottom: 0; top: 58px; background: var(--app-surface); border-radius: 18px 18px 0 0; border-top: 1px solid var(--app-line); padding: 9px 16px 14px; display: flex; flex-direction: column; gap: 11px; overflow: hidden; }
+  .b-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .b-modal-head h2 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+  .b-modal-head p { margin: 2px 0 0; font-size: 11px; color: var(--app-ink-2); }
+  .b-field { display: grid; gap: 5px; }
+  .b-field > span { font-size: 10.5px; color: var(--app-ink-2); }
+  .b-scale { display: flex; gap: 5px; }
+  .b-scale span { width: 29px; height: 29px; border: 1px solid var(--app-line); border-radius: 999px; display: grid; place-items: center; font-size: 11px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .b-scale span.on { background: var(--terra); border-color: var(--terra); color: #fff; font-weight: 600; }
+  .b-input { border: 1px solid var(--app-line); border-radius: 8px; padding: 7px 9px; font-size: 12px; display: flex; justify-content: space-between; align-items: baseline; }
+  .b-input b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .b-seg { display: flex; gap: 5px; flex-wrap: wrap; }
+  .b-seg span { border: 1px solid var(--app-line); border-radius: 999px; padding: 5px 9px; font-size: 10.5px; color: var(--app-ink-2); }
+  .b-seg span.on { border-color: var(--terra); background: #f7e7da; color: var(--terra-text); font-weight: 600; }
+  .b-submit { margin-top: auto; height: 44px; border-radius: 10px; background: var(--terra); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; }
+
+  /* Direction C — Caderno */
+  .c-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 6px; flex: none; font-size: 10.5px; color: var(--app-ink-2); }
+  .c-brand { font-size: 11px; font-weight: 600; color: var(--app-ink); letter-spacing: -0.01em; }
+  .c-bar.mid { display: grid; grid-template-columns: 28px 1fr 28px; align-items: center; padding: 8px 16px 4px; }
+  .c-bar.mid .c-title { text-align: center; font-size: 12px; font-weight: 600; color: var(--app-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c-iconbtn { width: 28px; height: 28px; display: grid; place-items: center; color: var(--app-ink); }
+
+  .c-body { padding: 0 16px 16px; }
+  .c-masthead { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 3px double var(--app-ink); padding-bottom: 5px; font-size: 10px; color: var(--app-ink-2); }
+  .c-masthead b { color: var(--app-ink); font-weight: 600; font-size: 10.5px; }
+  .c-h1 { margin: 12px 0 0; font-size: 25px; font-weight: 600; letter-spacing: -0.028em; line-height: 1.08; text-wrap: balance; }
+  .c-lede { margin: 5px 0 0; font-size: 12px; line-height: 1.5; color: var(--app-ink-2); }
+  .c-search { display: flex; align-items: center; gap: 7px; border-bottom: 1px dotted var(--app-ink-2); padding: 8px 0; margin-top: 12px; font-size: 12px; color: var(--app-ink-2); }
+  .c-filters { display: flex; gap: 9px; padding: 8px 0 7px; border-bottom: 1px solid var(--app-line); font-size: 10.5px; color: var(--app-ink-2); }
+  .c-filters b { color: var(--app-ink); font-weight: 600; }
+  .c-sec { display: flex; align-items: baseline; justify-content: space-between; margin-top: 15px; padding-bottom: 4px; border-bottom: 1px solid var(--app-ink); font-size: 10.5px; color: var(--app-ink-2); }
+  .c-sec b { color: var(--app-ink); font-weight: 600; font-size: 11px; }
+  .c-row { display: grid; grid-template-columns: minmax(0, auto) 1fr auto; gap: 7px; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--app-line); }
+  .c-row-main { min-width: 0; }
+  .c-name { display: block; font-size: 12.5px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c-area { display: block; font-size: 10px; color: var(--app-ink-2); margin-top: 1px; }
+  .c-dots { border-bottom: 1px dotted #c9bcab; transform: translateY(-3px); min-width: 12px; }
+  .c-score { text-align: right; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+  .c-score small { display: block; font-size: 9px; color: var(--app-ink-2); font-weight: 400; letter-spacing: 0; margin-top: 3px; }
+  .c-score.top { color: var(--terra-text); }
+  .c-empty { font-size: 10.5px; color: var(--app-ink-2); padding: 7px 0; }
+
+  .c-cafe { padding: 0 16px 16px; }
+  .c-area-line { font-size: 10px; color: var(--app-ink-2); border-bottom: 1px solid var(--app-line); padding-bottom: 5px; }
+  .c-h1-cafe { margin: 8px 0 0; font-size: 26px; font-weight: 600; letter-spacing: -0.03em; line-height: 1.04; }
+  .c-scoreline { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--app-ink); padding: 8px 0 9px; margin-top: 8px; }
+  .c-big { font-size: 52px; line-height: 0.82; font-weight: 600; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+  .c-of { font-size: 12px; color: var(--app-ink-2); margin-left: 4px; }
+  .c-facts { text-align: right; font-size: 10px; line-height: 1.55; color: var(--app-ink-2); }
+  .c-facts b { display: block; font-size: 10.5px; color: var(--app-ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .c-dims { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--app-ink); }
+  .c-dim { padding: 9px 0 10px; border-bottom: 1px solid var(--app-line); }
+  .c-dim:nth-child(odd) { border-right: 1px solid var(--app-line); padding-right: 10px; }
+  .c-dim:nth-child(even) { padding-left: 10px; }
+  .c-dim-label { font-size: 9.5px; color: var(--app-ink-2); }
+  .c-dim-val { margin-top: 3px; font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .c-dim-val small { font-size: 10px; color: var(--app-ink-2); font-weight: 400; letter-spacing: 0; }
+  .c-dim-bar { height: 2px; background: var(--app-muted); margin-top: 5px; }
+  .c-dim-bar i { display: block; height: 100%; background: var(--app-ink); }
+  .c-stamp { display: inline-block; margin-top: 11px; border: 1px dashed var(--terra-text); border-radius: 4px; padding: 4px 8px; font-size: 10.5px; font-weight: 600; color: var(--terra-text); transform: rotate(-1.4deg); }
+  .c-notes { margin-top: 14px; }
+  .c-sec2 { font-size: 10px; color: var(--app-ink-2); border-bottom: 1px solid var(--app-ink); padding-bottom: 4px; }
+  .c-note { padding: 8px 0; border-bottom: 1px dotted #c9bcab; }
+  .c-note p { margin: 0; font-size: 11.5px; line-height: 1.5; }
+  .c-note small { display: block; margin-top: 4px; font-size: 9.5px; color: var(--app-ink-2); }
+  .c-actions { margin-top: 14px; display: grid; gap: 8px; }
+  .c-btn { height: 42px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+  .c-btn.primary { background: var(--app-ink); color: var(--app-bg); }
+  .c-btn.ghost { border: 1px solid var(--app-line); color: var(--app-ink); }
+
+  .c-map { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+  .c-map .pin { width: 21px; height: 21px; border-radius: 4px; background: var(--app-bg); border: 1px solid var(--app-ink); color: var(--app-ink); font-size: 9px; font-weight: 600; }
+  .c-map .pin.sel { background: var(--app-ink); color: var(--app-bg); }
+  .c-map .pin.raw { width: 8px; height: 8px; border-radius: 999px; border: 1px solid var(--app-ink-2); background: transparent; }
+  .c-index { position: relative; z-index: 2; flex: none; background: var(--app-surface); border-top: 3px double var(--app-ink); padding: 8px 16px 11px; }
+  .c-index-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 10px; color: var(--app-ink-2); padding-bottom: 3px; }
+  .c-index .c-row { padding: 6px 0; }
+  .c-index-link { display: inline-block; margin-top: 6px; font-size: 10.5px; font-weight: 600; color: var(--terra-text); border-bottom: 1px solid var(--terra-text); }
+
+  .c-modal-wrap { position: absolute; inset: 0; background: rgba(36, 26, 20, 0.3); }
+  .c-modal { position: absolute; left: 0; right: 0; bottom: 0; top: 54px; background: var(--app-surface); border-radius: 16px 16px 0 0; border-top: 3px double var(--app-ink); padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  .c-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .c-modal-head h2 { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -0.025em; }
+  .c-modal-head p { margin: 2px 0 0; font-size: 10.5px; color: var(--app-ink-2); }
+  .c-field { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 8px; border-bottom: 1px solid var(--app-line); padding-bottom: 7px; }
+  .c-field > span { font-size: 10.5px; color: var(--app-ink-2); }
+  .c-field > span b { color: var(--app-ink); font-weight: 600; }
+  .c-scale { display: flex; gap: 4px; }
+  .c-scale span { width: 25px; height: 25px; border: 1px solid var(--app-line); border-radius: 3px; display: grid; place-items: center; font-size: 10px; color: var(--app-ink-2); font-variant-numeric: tabular-nums; }
+  .c-scale span.on { background: var(--app-ink); border-color: var(--app-ink); color: var(--app-bg); font-weight: 600; }
+  .c-line { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px dotted var(--app-ink-2); padding: 4px 0 5px; font-size: 11.5px; }
+  .c-line b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .c-choice { display: flex; gap: 9px; font-size: 10.5px; color: var(--app-ink-2); }
+  .c-choice b { color: var(--app-ink); font-weight: 600; }
+  .c-choice b::before { content: "✓"; margin-right: 3px; }
+  .c-submit { margin-top: auto; height: 42px; border-radius: 6px; background: var(--app-ink); color: var(--app-bg); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; }
+
+  .foot { padding: 34px 0 56px; border-top: 1px solid var(--board-line); margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: baseline; justify-content: space-between; }
+  .foot p { margin: 0; font-size: 12px; line-height: 1.6; color: var(--board-muted); max-width: 62ch; }
+  .foot small { font-size: 10.5px; color: #7d7166; }
+
+  @media (max-width: 1140px) {
+    .variants { grid-template-columns: 1fr; max-width: 400px; gap: 54px; }
+    .v-head { min-height: 0; margin-bottom: 4px; }
+  }
+
+  @media (max-width: 760px) {
+    .directions { grid-template-columns: 1fr; }
+    .head { padding-top: 40px; }
+    .tabs { margin-top: 30px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><path d="m9 18-6 3V6l6-3 6 3 6-3v15l-6 3-6-3Z"/><path d="M9 3v15"/><path d="M15 6v15"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1L12 21l7.7-7.6 1.1-1a5.5 5.5 0 0 0 0-7.8Z"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3"/><path d="M12 19v3"/><path d="M2 12h3"/><path d="M19 12h3"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h2"/><path d="M10 12h10"/><circle cx="8" cy="12" r="2"/><path d="M4 18h10"/><path d="M18 18h2"/><circle cx="16" cy="18" r="2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+    <symbol id="map" viewBox="0 0 360 560" preserveAspectRatio="xMidYMid slice">
+      <rect width="360" height="560" fill="#ede5d8"/>
+      <g fill="#f6f0e6" stroke="#ddd0bf" stroke-width="1">
+        <rect x="14" y="30" width="74" height="52" rx="2"/>
+        <rect x="100" y="22" width="58" height="64" rx="2"/>
+        <rect x="172" y="34" width="82" height="46" rx="2"/>
+        <rect x="268" y="26" width="78" height="58" rx="2"/>
+        <rect x="20" y="104" width="54" height="70" rx="2"/>
+        <rect x="88" y="112" width="82" height="52" rx="2"/>
+        <rect x="184" y="100" width="60" height="70" rx="2"/>
+        <rect x="258" y="104" width="88" height="54" rx="2"/>
+        <rect x="16" y="196" width="80" height="60" rx="2"/>
+        <rect x="110" y="186" width="58" height="80" rx="2"/>
+        <rect x="184" y="190" width="74" height="56" rx="2"/>
+        <rect x="272" y="182" width="74" height="68" rx="2"/>
+        <rect x="24" y="280" width="62" height="64" rx="2"/>
+        <rect x="100" y="290" width="86" height="48" rx="2"/>
+        <rect x="200" y="284" width="56" height="66" rx="2"/>
+        <rect x="270" y="276" width="76" height="58" rx="2"/>
+        <rect x="18" y="360" width="76" height="54" rx="2"/>
+        <rect x="108" y="364" width="54" height="46" rx="2"/>
+        <rect x="176" y="360" width="82" height="56" rx="2"/>
+        <rect x="272" y="352" width="74" height="60" rx="2"/>
+      </g>
+      <g stroke="#cfc2b0" stroke-width="1" stroke-dasharray="2 3">
+        <path d="M0 92h360"/><path d="M0 172h360"/><path d="M0 262h360"/><path d="M0 342h360"/>
+      </g>
+      <g stroke="#fffdf8" stroke-width="9" stroke-linecap="round" fill="none">
+        <path d="M-12 148c72-12 132 30 208 10s124-30 176 10"/>
+        <path d="M74-10c18 102-28 190 22 296s24 174-18 284"/>
+        <path d="M244-10c-20 100 24 190-12 290s-18 150 18 290"/>
+      </g>
+      <g stroke="#e6dbcb" stroke-width="3" fill="none">
+        <path d="M-10 214c80-14 140 22 210 4s130-22 170 8"/>
+        <path d="M-10 398c90-12 160 22 230 4s110-22 150 8"/>
+        <path d="M150-10c12 90-20 170 8 270s18 170-10 310"/>
+      </g>
+      <path d="M-20 468c90-38 174 34 400-20v132H-20Z" fill="#d7e0da"/>
+      <path d="M-20 468c90-38 174 34 400-20" stroke="#c3d1c8" stroke-width="2" fill="none"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="board">
+  <header class="head">
+    <div class="wordmark"><i></i>Flat White Me</div>
+    <p class="kicker">Direções de design · novembro 2026</p>
+    <h1>Três direções para o mesmo produto</h1>
+    <p class="intro">A mesma marca, os mesmos dados, três hierarquias diferentes. Cada direção aparece nas cinco páginas que definem o produto. Depois de escolheres, implemento essa direção nos componentes reais e as restantes páginas seguem a mesma linguagem.</p>
+
+    <div class="directions">
+      <div class="direction">
+        <div class="direction-top"><span class="letter">A</span><h2>Balcão</h2></div>
+        <p>A nota manda. Editorial, denso, sem cartões. Números grandes, regras finas e a lista como um balcão de café.</p>
+      </div>
+      <div class="direction">
+        <div class="direction-top"><span class="letter">B</span><h2>Cafés de bairro</h2></div>
+        <p>Cartões quentes, mapa à vista e leitura por bairro. É a direção mais próxima da app atual, com mais calor e menos densidade.</p>
+      </div>
+      <div class="direction">
+        <div class="direction-top"><span class="letter">C</span><h2>Caderno de provas</h2></div>
+        <p>Tabela de provas em papel: linhas pontilhadas, medidas finas e uma nota que parece escrita à mão.</p>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Páginas">
+    <button type="button" role="tab" id="tab-explorar" aria-controls="panel-explorar" aria-selected="true">Explorar</button>
+    <button type="button" role="tab" id="tab-cafe" aria-controls="panel-cafe" aria-selected="false" tabindex="-1">Café</button>
+    <button type="button" role="tab" id="tab-mapa" aria-controls="panel-mapa" aria-selected="false" tabindex="-1">Mapa</button>
+    <button type="button" role="tab" id="tab-ranking" aria-controls="panel-ranking" aria-selected="false" tabindex="-1">Ranking</button>
+    <button type="button" role="tab" id="tab-avaliar" aria-controls="panel-avaliar" aria-selected="false" tabindex="-1">Avaliar</button>
+  </nav>
+
+  <main>
+    <!-- EXPLORAR -->
+    <section class="panel" id="panel-explorar" role="tabpanel" aria-labelledby="tab-explorar">
+      <div class="variants">
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">A</span><h2>Balcão</h2><span class="note">ranking primeiro</span></div>
+            <p>A lista é o ecrã. Cada café é uma linha com posição, nota e amostra. O mapa é uma ação, não o palco.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-a" role="img" aria-label="Explorar, direção A: lista de ranking com posições e notas">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="a-bar"><span class="a-brand">Flat White Me</span><span class="a-city">Lisboa</span></div>
+              <div class="scroll">
+                <div class="a-body">
+                  <h1 class="a-h1">O teu próximo flat white.</h1>
+                  <p class="a-lede">Lisboa, ordenada por quem prova.<br>Sem lugares pagos. Sem notas editoriais.</p>
+                  <div class="a-search"><svg class="i"><use href="#i-search"/></svg>Pesquisar café ou bairro</div>
+                  <div class="a-chips"><span>Filtros</span><span>Perto de mim</span><span>Especialidade</span></div>
+                  <div class="a-sechead"><span>Ranking</span><span>8 cafés · 3 com poucas avaliações</span></div>
+                  <div class="a-list">
+                    <div class="a-row"><span class="a-rank top">01</span><div><div class="a-name">Fábrica do Largo</div><div class="a-area">Príncipe Real</div></div><div class="a-score"><b>4,7</b><span>28 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank top">02</span><div><div class="a-name">O Canto</div><div class="a-area">Graça</div></div><div class="a-score"><b>4,5</b><span>19 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank top">03</span><div><div class="a-name">Alvorada</div><div class="a-area">Chiado</div></div><div class="a-score"><b>4,4</b><span>12 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">04</span><div><div class="a-name">Meia-Noite</div><div class="a-area">Anjos</div></div><div class="a-score"><b>4,3</b><span>9 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">05</span><div><div class="a-name">Padaria do Sol</div><div class="a-area">Campo de Ourique</div></div><div class="a-score"><b>4,2</b><span>7 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">06</span><div><div class="a-name">Três Xícaras</div><div class="a-area">Santos</div></div><div class="a-score"><b>4,0</b><span>5 aval.</span></div></div>
+                  </div>
+                  <div class="a-sechead"><span>Ainda sem avaliações</span><span>3 cafés</span></div>
+                  <div class="a-row"><span class="a-rank">—</span><div><div class="a-name">Café do Beco</div><div class="a-area">Bairro Alto</div></div><div class="a-score"><b>—</b><span>0 aval.</span></div></div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-a">
+                <span class="tab on"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">B</span><h2>Cafés de bairro</h2><span class="note">cartões primeiro</span></div>
+            <p>Cada café é um cartão quente com um selo de nota. O mapa aparece cedo, como convite, e os filtros ficam à mão.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-b" role="img" aria-label="Explorar, direção B: cartões de café com selo de nota e pré-visualização do mapa">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="b-bar"><span class="b-brand"><i></i>Flat White Me</span><span class="b-pill">Lisboa</span></div>
+              <div class="scroll">
+                <div class="b-body">
+                  <h1 class="b-h1">O teu próximo flat white.</h1>
+                  <p class="b-lede">Lisboa, ordenada por quem prova. Sem lugares pagos.</p>
+                  <div class="b-search"><svg class="i"><use href="#i-search"/></svg>Pesquisar café ou bairro</div>
+                  <div class="b-actions">
+                    <span class="b-btn primary"><svg class="i" style="width:15px;height:15px"><use href="#i-list"/></svg>Lista</span>
+                    <span class="b-btn secondary"><svg class="i" style="width:15px;height:15px"><use href="#i-map"/></svg>Mapa</span>
+                  </div>
+                  <div class="b-chips"><span class="b-chip">Filtros</span><span class="b-chip">Perto de mim</span><span class="b-chip">Especialidade</span></div>
+                  <div class="b-mapcard">
+                    <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                    <span class="pin sel" style="left:46%;top:46%">4,7</span>
+                    <span class="pin" style="left:64%;top:30%">4,5</span>
+                    <span class="pin" style="left:32%;top:66%">4,4</span>
+                    <span class="b-mapmeta"><svg class="i"><use href="#i-map"/></svg>11 cafés no mapa</span>
+                  </div>
+                  <div class="b-sechead"><h3>No ranking</h3><span>8 cafés</span></div>
+                  <div class="b-card">
+                    <div class="b-card-top">
+                      <div><div class="b-name">Fábrica do Largo</div><div class="b-area">Príncipe Real · especialidade</div></div>
+                      <span class="b-save"><svg class="i"><use href="#i-heart"/></svg></span>
+                    </div>
+                    <div class="b-scoreline"><span class="b-badge">4,7<small>de 5</small></span><span class="b-sample">28 avaliações · última 9 nov</span></div>
+                    <div class="b-cardmeta">Preço médio 2,80 €</div>
+                    <span class="b-cardbtn">Avaliar este café</span>
+                  </div>
+                  <div class="b-card">
+                    <div class="b-card-top">
+                      <div><div class="b-name">O Canto</div><div class="b-area">Graça · especialidade</div></div>
+                      <span class="b-save"><svg class="i"><use href="#i-heart"/></svg></span>
+                    </div>
+                    <div class="b-scoreline"><span class="b-badge">4,5<small>de 5</small></span><span class="b-sample">19 avaliações · última 4 nov</span></div>
+                  </div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-b">
+                <span class="tab on"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">C</span><h2>Caderno de provas</h2><span class="note">índice primeiro</span></div>
+            <p>Uma página de caderno: linhas pontilhadas, posições e notas alinhadas como um índice impresso. Nada flutua.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-c" role="img" aria-label="Explorar, direção C: índice de cafés com linhas pontilhadas e notas">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="c-bar"><span class="c-brand">Flat White Me</span><span>11 nov 2026</span></div>
+              <div class="scroll">
+                <div class="c-body">
+                  <div class="c-masthead"><b>Lisboa · caderno de provas</b><span>edição 04</span></div>
+                  <h1 class="c-h1">Onde provar flat white.</h1>
+                  <p class="c-lede">Ordenado por quem prova. A amostra fica sempre à vista.</p>
+                  <div class="c-search"><svg class="i" style="width:15px;height:15px"><use href="#i-search"/></svg>Procurar por café ou bairro</div>
+                  <div class="c-filters"><b>Todas</b><span>Especialidade</span><span>Perto de mim</span><span>Filtros</span></div>
+                  <div class="c-sec"><b>Ranking</b><span>8 cafés</span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Fábrica do Largo</span><span class="c-area">Príncipe Real</span></div><span class="c-dots"></span><span class="c-score top">4,7<small>28 provas</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">O Canto</span><span class="c-area">Graça</span></div><span class="c-dots"></span><span class="c-score top">4,5<small>19 provas</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Alvorada</span><span class="c-area">Chiado</span></div><span class="c-dots"></span><span class="c-score top">4,4<small>12 provas</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Meia-Noite</span><span class="c-area">Anjos</span></div><span class="c-dots"></span><span class="c-score">4,3<small>9 provas</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Padaria do Sol</span><span class="c-area">Campo de Ourique</span></div><span class="c-dots"></span><span class="c-score">4,2<small>7 provas</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Três Xícaras</span><span class="c-area">Santos</span></div><span class="c-dots"></span><span class="c-score">4,0<small>5 provas</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Casa Almada</span><span class="c-area">Alfama</span></div><span class="c-dots"></span><span class="c-score">3,9<small>4 provas</small></span></div>
+                  <div class="c-sec"><b>Ainda sem avaliações</b><span>3 cafés</span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">Café do Beco</span><span class="c-area">Bairro Alto</span></div><span class="c-dots"></span><span class="c-score">—<small>0 provas</small></span></div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-c">
+                <span class="tab on"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- CAFÉ -->
+    <section class="panel" id="panel-cafe" role="tabpanel" aria-labelledby="tab-cafe" hidden>
+      <div class="variants">
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">A</span><h2>Balcão</h2><span class="note">a nota manda</span></div>
+            <p>A nota ocupa o centro, com a amostra e a data ao lado. As dimensões são réguas finas; as notas, citações.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-a" role="img" aria-label="Página de café, direção A: nota 4,7 em destaque e dimensões em réguas">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="a-bar mid">
+                <span class="a-iconbtn"><svg class="i"><use href="#i-back"/></svg></span>
+                <span class="a-title">Fábrica do Largo</span>
+                <span class="a-iconbtn"><svg class="i"><use href="#i-search"/></svg></span>
+              </div>
+              <div class="scroll">
+                <div class="a-cafehead"><div class="a-kicker">Príncipe Real · café de especialidade</div><h1 class="a-h1-cafe">Fábrica do Largo</h1></div>
+                <div class="a-scoreblock">
+                  <div><span class="a-big">4,7</span><span class="a-of">de 5</span></div>
+                  <div class="a-stat"><b>Ranked</b>28 avaliações<br>Última visita · 9 nov 2026</div>
+                </div>
+                <div class="a-dims">
+                  <div class="a-dim"><div class="a-dim-top"><span>Sabor</span><b>4,8</b></div><div class="a-dimbar"><i style="width:96%"></i></div></div>
+                  <div class="a-dim"><div class="a-dim-top"><span>Textura do leite</span><b>4,5</b></div><div class="a-dimbar"><i style="width:90%"></i></div></div>
+                  <div class="a-dim"><div class="a-dim-top"><span>Temperatura</span><b>4,2</b></div><div class="a-dimbar"><i style="width:84%"></i></div></div>
+                  <div class="a-dim"><div class="a-dim-top"><span>Qualidade-preço</span><b>4,1</b></div><div class="a-dimbar"><i style="width:82%"></i></div></div>
+                </div>
+                <div class="a-actions">
+                  <span class="a-btn primary">Avaliar este café</span>
+                  <span class="a-btn ghost">Guardar para depois</span>
+                </div>
+                <div class="a-notes">
+                  <div class="a-sechead" style="border-top-color:var(--app-line);margin-bottom:9px"><span>Notas públicas</span><span>mais recentes</span></div>
+                  <div class="a-note">“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”<small>Marta · 9 nov 2026</small></div>
+                  <div class="a-note" style="margin-top:11px">“A melhor temperatura que provei em Lisboa este ano. Não queima.”<small>João · 2 nov 2026</small></div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-a">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">B</span><h2>Cafés de bairro</h2><span class="note">o café manda</span></div>
+            <p>O nome e o selo de nota abrem a página. As dimensões ganham barras quentes; as notas ficam em cartões macios.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-b" role="img" aria-label="Página de café, direção B: selo de nota, barras de dimensões e cartões de notas">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="b-bar mid">
+                <span class="b-iconbtn"><svg class="i"><use href="#i-back"/></svg></span>
+                <span class="b-title">Fábrica do Largo</span>
+                <span class="b-iconbtn"><svg class="i"><use href="#i-search"/></svg></span>
+              </div>
+              <div class="scroll">
+                <div class="b-cafehead">
+                  <div class="b-caffeine">Príncipe Real <span class="b-tag">especialidade</span></div>
+                  <h1 class="b-h1-cafe">Fábrica do Largo</h1>
+                </div>
+                <div class="b-scorecard">
+                  <div class="b-scorecard-top"><span class="b-badge">4,7<small>de 5</small></span><span class="b-status">Ranked</span></div>
+                  <p><b>28 avaliações</b> nos últimos 365 dias<br>Última visita · 9 nov 2026</p>
+                </div>
+                <div class="b-dims">
+                  <div class="b-dim"><div class="b-dim-top"><span>Sabor</span><b>4,8 / 5</b></div><div class="b-dimbar"><i style="width:96%"></i></div></div>
+                  <div class="b-dim"><div class="b-dim-top"><span>Textura do leite</span><b>4,5 / 5</b></div><div class="b-dimbar"><i style="width:90%"></i></div></div>
+                  <div class="b-dim"><div class="b-dim-top"><span>Temperatura</span><b>4,2 / 5</b></div><div class="b-dimbar"><i style="width:84%"></i></div></div>
+                  <div class="b-dim"><div class="b-dim-top"><span>Qualidade-preço</span><b>4,1 / 5</b></div><div class="b-dimbar"><i style="width:82%"></i></div></div>
+                </div>
+                <div class="b-facts"><span class="b-fact">Preço médio <b>2,80 €</b></span><span class="b-fact">Leite <b>inteiro</b></span><span class="b-fact"><b>Normal</b></span></div>
+                <div class="b-actions-cafe"><span class="b-btn primary">Avaliar este café</span><span class="b-btn secondary">Guardar para depois</span></div>
+                <div class="b-notes">
+                  <div class="b-note">
+                    <p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p>
+                    <div class="b-note-meta"><span class="b-avatar">M</span>Marta · 9 nov 2026</div>
+                  </div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-b">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">C</span><h2>Caderno de provas</h2><span class="note">a prova manda</span></div>
+            <p>A página é uma ficha de prova: nota, quatro medidas numa grelha, carimbo de preço e notas com linha pontilhada.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-c" role="img" aria-label="Página de café, direção C: ficha de prova com quatro medidas e carimbo de preço">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="c-bar mid">
+                <span class="c-iconbtn"><svg class="i"><use href="#i-back"/></svg></span>
+                <span class="c-title">Fábrica do Largo</span>
+                <span class="c-iconbtn"><svg class="i"><use href="#i-close"/></svg></span>
+              </div>
+              <div class="scroll">
+                <div class="c-cafe">
+                  <div class="c-area-line">Príncipe Real · especialidade · visita 28 de 28</div>
+                  <h1 class="c-h1-cafe">Fábrica do Largo</h1>
+                  <div class="c-scoreline">
+                    <div><span class="c-big">4,7</span><span class="c-of">/ 5</span></div>
+                    <div class="c-facts"><b>28 provas</b>última · 9 nov 2026<br>365 dias</div>
+                  </div>
+                  <div class="c-dims">
+                    <div class="c-dim"><div class="c-dim-label">Sabor</div><div class="c-dim-val">4,8<small> / 5</small></div><div class="c-dim-bar"><i style="width:96%"></i></div></div>
+                    <div class="c-dim"><div class="c-dim-label">Textura do leite</div><div class="c-dim-val">4,5<small> / 5</small></div><div class="c-dim-bar"><i style="width:90%"></i></div></div>
+                    <div class="c-dim"><div class="c-dim-label">Temperatura</div><div class="c-dim-val">4,2<small> / 5</small></div><div class="c-dim-bar"><i style="width:84%"></i></div></div>
+                    <div class="c-dim"><div class="c-dim-label">Qualidade-preço</div><div class="c-dim-val">4,1<small> / 5</small></div><div class="c-dim-bar"><i style="width:82%"></i></div></div>
+                  </div>
+                  <span class="c-stamp">Preço médio · 2,80 €</span>
+                  <div class="c-notes">
+                    <div class="c-sec2">Notas de prova</div>
+                    <div class="c-note"><p>“Leite bem texturado, sem bolhas. O sabor do café ainda aparece depois do leite.”</p><small>Marta · 9 nov 2026</small></div>
+                    <div class="c-note"><p>“A melhor temperatura que provei em Lisboa este ano. Não queima.”</p><small>João · 2 nov 2026</small></div>
+                  </div>
+                  <div class="c-actions"><span class="c-btn primary">Registar prova</span><span class="c-btn ghost">Guardar para depois</span></div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-c">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- MAPA -->
+    <section class="panel" id="panel-mapa" role="tabpanel" aria-labelledby="tab-mapa" hidden>
+      <div class="variants">
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">A</span><h2>Balcão</h2><span class="note">mapa com índice</span></div>
+            <p>Pinos redondos com nota, um pino selecionado a negro e uma folha inferior com as linhas do ranking.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-a" role="img" aria-label="Mapa, direção A: pinos com notas e folha inferior com lista">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="a-bar"><span class="a-brand">Mapa</span><span class="a-city">Lisboa</span></div>
+              <div class="a-map">
+                <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                <span class="pin" style="left:46%;top:26%">4,7</span>
+                <span class="pin" style="left:58%;top:38%">4,5</span>
+                <span class="pin" style="left:33%;top:44%">4,4</span>
+                <span class="pin sel" style="left:68%;top:54%">4,3</span>
+                <span class="pin" style="left:40%;top:62%">4,2</span>
+                <span class="pin" style="left:54%;top:70%">4,0</span>
+                <span class="pin raw" style="left:63%;top:32%" aria-hidden="true"></span>
+                <span class="pin raw" style="left:28%;top:55%" aria-hidden="true"></span>
+              </div>
+              <div class="a-sheet">
+                <div class="handle"></div>
+                <div class="a-sheet-head"><span><b>No ecrã</b> · 7 cafés</span><span>ordenado por nota</span></div>
+                <div class="a-row"><span class="a-rank top">01</span><div><div class="a-name">Fábrica do Largo</div><div class="a-area">Príncipe Real</div></div><div class="a-score"><b>4,7</b><span>28 aval.</span></div></div>
+                <div class="a-row"><span class="a-rank top">02</span><div><div class="a-name">O Canto</div><div class="a-area">Graça</div></div><div class="a-score"><b>4,5</b><span>19 aval.</span></div></div>
+                <div class="a-row"><span class="a-rank top">03</span><div><div class="a-name">Alvorada</div><div class="a-area">Chiado</div></div><div class="a-score"><b>4,4</b><span>12 aval.</span></div></div>
+                <span class="a-link">Abrir lista completa <svg class="i" style="width:13px;height:13px"><use href="#i-arrow"/></svg></span>
+              </div>
+              <nav class="tabbar tabbar-a">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">B</span><h2>Cafés de bairro</h2><span class="note">mapa com cartão</span></div>
+            <p>O mapa é o palco. Pesquisa flutuante, pinos terracota e um cartão de café em destaque para abrir a ficha.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-b" role="img" aria-label="Mapa, direção B: pinos terracota e cartão de café em destaque">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="b-bar"><span class="b-brand"><i></i>Mapa</span><span class="b-pill">Lisboa</span></div>
+              <div class="b-map">
+                <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                <span class="pin" style="left:46%;top:26%">4,7</span>
+                <span class="pin" style="left:58%;top:38%">4,5</span>
+                <span class="pin" style="left:33%;top:44%">4,4</span>
+                <span class="pin sel" style="left:68%;top:54%">4,3</span>
+                <span class="pin" style="left:40%;top:62%">4,2</span>
+                <span class="pin" style="left:54%;top:70%">4,0</span>
+                <span class="pin raw" style="left:63%;top:32%" aria-hidden="true"></span>
+                <div class="b-float">
+                  <div class="b-search"><svg class="i"><use href="#i-search"/></svg>Pesquisar café ou bairro</div>
+                  <div class="b-float-chips"><span class="b-chip">Filtros</span><span class="b-chip">Perto de mim</span><span class="b-chip">Especialidade</span></div>
+                </div>
+                <span class="b-locate"><svg class="i"><use href="#i-locate"/></svg></span>
+              </div>
+              <div class="b-carousel">
+                <div class="b-carousel-card">
+                  <div class="b-carousel-top">
+                    <div><div class="b-name">Meia-Noite</div><div class="b-area">Anjos · especialidade · 2,60 €</div></div>
+                    <span class="b-save"><svg class="i"><use href="#i-heart"/></svg></span>
+                  </div>
+                  <div class="b-scoreline"><span class="b-badge">4,3<small>de 5</small></span><span class="b-sample">9 avaliações · última 3 nov</span></div>
+                  <span class="b-cardbtn">Ver café</span>
+                </div>
+              </div>
+              <nav class="tabbar tabbar-b">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">C</span><h2>Caderno de provas</h2><span class="note">mapa de papel</span></div>
+            <p>Mapa em papel, pinos numerados e um índice impresso em baixo. O mapa é uma ilustração, não uma interface.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-c" role="img" aria-label="Mapa, direção C: mapa de papel com pinos numerados e índice impresso">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="c-bar"><span class="c-brand">Mapa de Lisboa</span><span>11 nov 2026</span></div>
+              <div class="c-map">
+                <svg class="map-svg" aria-hidden="true"><use href="#map"/></svg>
+                <span class="pin" style="left:46%;top:26%">1</span>
+                <span class="pin" style="left:58%;top:38%">2</span>
+                <span class="pin" style="left:33%;top:44%">3</span>
+                <span class="pin sel" style="left:68%;top:54%">4</span>
+                <span class="pin" style="left:40%;top:62%">5</span>
+                <span class="pin raw" style="left:63%;top:32%" aria-hidden="true"></span>
+                <span class="pin raw" style="left:28%;top:55%" aria-hidden="true"></span>
+              </div>
+              <div class="c-index">
+                <div class="c-index-head"><span><b>No mapa</b> · 7 cafés</span><span>por nota</span></div>
+                <div class="c-row"><div class="c-row-main"><span class="c-name">1 · Fábrica do Largo</span><span class="c-area">Príncipe Real</span></div><span class="c-dots"></span><span class="c-score top">4,7<small>28</small></span></div>
+                <div class="c-row"><div class="c-row-main"><span class="c-name">2 · O Canto</span><span class="c-area">Graça</span></div><span class="c-dots"></span><span class="c-score top">4,5<small>19</small></span></div>
+                <div class="c-row"><div class="c-row-main"><span class="c-name">3 · Alvorada</span><span class="c-area">Chiado</span></div><span class="c-dots"></span><span class="c-score top">4,4<small>12</small></span></div>
+                <span class="c-index-link">Abrir a lista completa</span>
+              </div>
+              <nav class="tabbar tabbar-c">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- RANKING -->
+    <section class="panel" id="panel-ranking" role="tabpanel" aria-labelledby="tab-ranking" hidden>
+      <div class="variants">
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">A</span><h2>Balcão</h2><span class="note">tabela contínua</span></div>
+            <p>Uma única tabela do 1 ao 10. Sem pódio, sem cartões: a ordem e a nota bastam.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-a" role="img" aria-label="Ranking, direção A: tabela do 1 ao 10 com notas e amostras">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="a-bar mid">
+                <span class="a-iconbtn"><svg class="i"><use href="#i-back"/></svg></span>
+                <span class="a-title">Top 10 de Lisboa</span>
+                <span class="a-iconbtn"><svg class="i"><use href="#i-search"/></svg></span>
+              </div>
+              <div class="scroll">
+                <div class="a-body">
+                  <h1 class="a-h1" style="font-size:24px">Onde beber um flat white em Lisboa.</h1>
+                  <p class="a-lede">Top 10 segundo quem prova. Sem lugares pagos.</p>
+                  <div class="a-sechead"><span>Ranking</span><span>10 cafés · atualizado hoje</span></div>
+                  <div class="a-list">
+                    <div class="a-row"><span class="a-rank top">01</span><div><div class="a-name">Fábrica do Largo</div><div class="a-area">Príncipe Real</div></div><div class="a-score"><b>4,7</b><span>28 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank top">02</span><div><div class="a-name">O Canto</div><div class="a-area">Graça</div></div><div class="a-score"><b>4,5</b><span>19 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank top">03</span><div><div class="a-name">Alvorada</div><div class="a-area">Chiado</div></div><div class="a-score"><b>4,4</b><span>12 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">04</span><div><div class="a-name">Meia-Noite</div><div class="a-area">Anjos</div></div><div class="a-score"><b>4,3</b><span>9 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">05</span><div><div class="a-name">Padaria do Sol</div><div class="a-area">Campo de Ourique</div></div><div class="a-score"><b>4,2</b><span>7 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">06</span><div><div class="a-name">Três Xícaras</div><div class="a-area">Santos</div></div><div class="a-score"><b>4,0</b><span>5 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">07</span><div><div class="a-name">Casa Almada</div><div class="a-area">Alfama</div></div><div class="a-score"><b>3,9</b><span>4 aval.</span></div></div>
+                    <div class="a-row"><span class="a-rank">08</span><div><div class="a-name">Ponto Final</div><div class="a-area">Estrela</div></div><div class="a-score"><b>3,8</b><span>3 aval.</span></div></div>
+                  </div>
+                  <p class="a-empty">Entram cafés com 3 ou mais avaliações nos últimos 365 dias.</p>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-a">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">B</span><h2>Cafés de bairro</h2><span class="note">pódio primeiro</span></div>
+            <p>Os três primeiros sobem a um pódio de cartões; do quarto em diante, cartões de lista. Mais celebração, menos tabela.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-b" role="img" aria-label="Ranking, direção B: pódio de três cartões e lista a partir do quarto">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="b-bar mid">
+                <span class="b-iconbtn"><svg class="i"><use href="#i-back"/></svg></span>
+                <span class="b-title">Top 10 de Lisboa</span>
+                <span class="b-iconbtn"><svg class="i"><use href="#i-search"/></svg></span>
+              </div>
+              <div class="scroll">
+                <div class="b-body">
+                  <h1 class="b-h1">O melhor flat white de Lisboa.</h1>
+                  <p class="b-lede">Avaliado por quem bebeu. Só entram cafés com 3 ou mais avaliações.</p>
+                  <div class="b-podium">
+                    <div class="b-pod" style="align-self:start;margin-top:26px"><span class="b-pod-rank">02</span><span class="b-pod-name">O Canto</span><span class="b-pod-score">4,5<small> /5</small></span><span class="b-pod-n">19 aval.</span></div>
+                    <div class="b-pod first"><span class="b-pod-rank">01</span><span class="b-pod-name">Fábrica do Largo</span><span class="b-pod-score">4,7<small> /5</small></span><span class="b-pod-n">28 aval.</span></div>
+                    <div class="b-pod" style="align-self:start;margin-top:40px"><span class="b-pod-rank">03</span><span class="b-pod-name">Alvorada</span><span class="b-pod-score">4,4<small> /5</small></span><span class="b-pod-n">12 aval.</span></div>
+                  </div>
+                  <div class="b-sechead"><h3>Do 4.º ao 10.º</h3><span>por nota</span></div>
+                  <div class="b-card">
+                    <div class="b-card-top"><div><div class="b-name">Meia-Noite</div><div class="b-area">Anjos · especialidade</div></div><span class="b-save"><svg class="i"><use href="#i-heart"/></svg></span></div>
+                    <div class="b-scoreline"><span class="b-badge">4,3<small>de 5</small></span><span class="b-sample">9 avaliações · última 3 nov</span></div>
+                  </div>
+                  <div class="b-card">
+                    <div class="b-card-top"><div><div class="b-name">Padaria do Sol</div><div class="b-area">Campo de Ourique</div></div><span class="b-save"><svg class="i"><use href="#i-heart"/></svg></span></div>
+                    <div class="b-scoreline"><span class="b-badge">4,2<small>de 5</small></span><span class="b-sample">7 avaliações · última 1 nov</span></div>
+                  </div>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-b">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">C</span><h2>Caderno de provas</h2><span class="note">tabela impressa</span></div>
+            <p>Uma tabela de jornal: número, café, nota e provas, com cabeçalho e rodapé. O top 3 ganha a cor do carimbo.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-c" role="img" aria-label="Ranking, direção C: tabela impressa com número, café, nota e provas">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="c-bar"><span class="c-brand">Ranking · Lisboa</span><span>11 nov 2026</span></div>
+              <div class="scroll">
+                <div class="c-body">
+                  <div class="c-masthead"><b>Top 10</b><span>atualizado hoje</span></div>
+                  <h1 class="c-h1">O melhor flat white da cidade.</h1>
+                  <p class="c-lede">Só entra quem tem 3 ou mais provas nos últimos 365 dias.</p>
+                  <div class="c-sec"><b>Nº · Café</b><span>Nota · Provas</span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">01 · Fábrica do Largo</span><span class="c-area">Príncipe Real</span></div><span class="c-dots"></span><span class="c-score top">4,7<small>28</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">02 · O Canto</span><span class="c-area">Graça</span></div><span class="c-dots"></span><span class="c-score top">4,5<small>19</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">03 · Alvorada</span><span class="c-area">Chiado</span></div><span class="c-dots"></span><span class="c-score top">4,4<small>12</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">04 · Meia-Noite</span><span class="c-area">Anjos</span></div><span class="c-dots"></span><span class="c-score">4,3<small>9</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">05 · Padaria do Sol</span><span class="c-area">Campo de Ourique</span></div><span class="c-dots"></span><span class="c-score">4,2<small>7</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">06 · Três Xícaras</span><span class="c-area">Santos</span></div><span class="c-dots"></span><span class="c-score">4,0<small>5</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">07 · Casa Almada</span><span class="c-area">Alfama</span></div><span class="c-dots"></span><span class="c-score">3,9<small>4</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">08 · Ponto Final</span><span class="c-area">Estrela</span></div><span class="c-dots"></span><span class="c-score">3,8<small>3</small></span></div>
+                  <div class="c-row"><div class="c-row-main"><span class="c-name">09 · Largo 22</span><span class="c-area">Alvalade</span></div><span class="c-dots"></span><span class="c-score">3,8<small>3</small></span></div>
+                  <p class="c-empty" style="margin-top:10px">Notas calculadas nos últimos 365 dias. Preço médio e leite ficam na ficha de cada café.</p>
+                </div>
+                <div class="fade"></div>
+              </div>
+              <nav class="tabbar tabbar-c">
+                <span class="tab"><svg class="i"><use href="#i-search"/></svg>Explorar</span>
+                <span class="tab"><svg class="i"><use href="#i-heart"/></svg>Lista</span>
+                <span class="tab"><svg class="i"><use href="#i-info"/></svg>Sobre</span>
+              </nav>
+            </div>
+          </div>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- AVALIAR -->
+    <section class="panel" id="panel-avaliar" role="tabpanel" aria-labelledby="tab-avaliar" hidden>
+      <div class="variants">
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">A</span><h2>Balcão</h2><span class="note">formulário directo</span></div>
+            <p>Quatro escalas compactas, preço numa linha e o botão sempre ao fundo. O mais rápido de preencher.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-a" role="img" aria-label="Avaliar, direção A: formulário compacto com escalas e botão de guardar">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="scroll">
+                <div class="a-cafehead" style="padding-top:16px"><div class="a-kicker">Fábrica do Largo</div><h1 class="a-h1-cafe" style="font-size:23px">Avaliar este café</h1></div>
+                <div class="a-scoreblock" style="margin-top:12px"><div><span class="a-big" style="font-size:44px">4,7</span><span class="a-of">de 5</span></div><div class="a-stat"><b>Ranked</b>28 avaliações<br>última · 9 nov 2026</div></div>
+              </div>
+              <div class="a-modal-wrap"></div>
+              <div class="a-modal">
+                <div class="handle"></div>
+                <div class="a-modal-head">
+                  <div><h2>Nova avaliação</h2><p>Fábrica do Largo · visita de hoje</p></div>
+                  <span class="a-iconbtn"><svg class="i"><use href="#i-close"/></svg></span>
+                </div>
+                <div class="a-field"><span>Sabor</span><div class="a-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="a-field"><span>Textura do leite</span><div class="a-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="a-field"><span>Temperatura</span><div class="a-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="a-field"><span>Qualidade-preço</span><div class="a-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="a-field"><span>Preço pago</span><div class="a-line"><span>2,80 €</span><b>EUR</b></div></div>
+                <div class="a-field"><span>Leite</span><div class="a-seg"><span class="on">Inteiro</span><span>Aveia</span><span>Sem lactose</span><span>Outro</span></div></div>
+                <div class="a-field"><span>Tamanho</span><div class="a-seg"><span class="on">Normal</span><span>Grande</span></div></div>
+                <div class="a-field"><span>Nota (opcional)</span><div class="a-line" style="border-bottom-color:var(--app-line)"><span style="color:var(--app-ink-2)">Escreve uma nota curta</span><b>0/280</b></div></div>
+                <span class="a-submit">Guardar avaliação</span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">B</span><h2>Cafés de bairro</h2><span class="note">conversa</span></div>
+            <p>Perguntas em linguagem de café, botões redondos e o leite e o tamanho como escolhas visíveis. Mais humano.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-b" role="img" aria-label="Avaliar, direção B: perguntas amigáveis, escalas redondas e escolhas de leite">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="scroll">
+                <div class="b-cafehead" style="padding-top:16px"><div class="b-caffeine">Fábrica do Largo <span class="b-tag">Príncipe Real</span></div><h1 class="b-h1-cafe" style="font-size:23px">Como foi o café?</h1></div>
+                <div class="b-scorecard" style="margin-top:12px"><div class="b-scorecard-top"><span class="b-badge">4,7<small>de 5</small></span><span class="b-status">Ranked</span></div><p><b>28 avaliações</b> nos últimos 365 dias</p></div>
+              </div>
+              <div class="b-modal-wrap"></div>
+              <div class="b-modal">
+                <div class="handle"></div>
+                <div class="b-modal-head">
+                  <div><h2>Como foi o café?</h2><p>Fábrica do Largo · hoje</p></div>
+                  <span class="b-iconbtn"><svg class="i"><use href="#i-close"/></svg></span>
+                </div>
+                <div class="b-field"><span>Sabor</span><div class="b-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="b-field"><span>Textura do leite</span><div class="b-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="b-field"><span>Temperatura</span><div class="b-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="b-field"><span>Qualidade-preço</span><div class="b-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="b-field"><span>Quanto pagaste</span><div class="b-input"><span>2,80 €</span><b>EUR</b></div></div>
+                <div class="b-field"><span>Leite</span><div class="b-seg"><span class="on">Inteiro</span><span>Aveia</span><span>Sem lactose</span><span>Outro</span></div></div>
+                <div class="b-field"><span>Tamanho</span><div class="b-seg"><span class="on">Normal</span><span>Grande</span></div></div>
+                <div class="b-field"><span>Queres deixar uma nota?</span><div class="b-input" style="color:var(--app-ink-2)">Opcional · até 280 caracteres</div></div>
+                <span class="b-submit">Guardar avaliação</span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+        <figure class="variant">
+          <div class="v-head">
+            <div class="v-title"><span class="letter">C</span><h2>Caderno de provas</h2><span class="note">ficha numerada</span></div>
+            <p>Quatro perguntas numeradas, campos sublinhados e escolhas com visto. Parece preencher uma ficha de prova.</p>
+          </div>
+          <div class="phone">
+            <div class="screen screen-c" role="img" aria-label="Avaliar, direção C: ficha numerada com campos sublinhados">
+              <div class="status"><span>9:41</span><span class="status-r">5G<b class="batt"></b></span></div>
+              <div class="scroll">
+                <div class="c-cafe" style="padding-top:16px">
+                  <div class="c-area-line">Fábrica do Largo · Príncipe Real</div>
+                  <h1 class="c-h1-cafe" style="font-size:23px">Registar prova</h1>
+                  <div class="c-scoreline" style="padding:7px 0 8px"><div><span class="c-big" style="font-size:40px">4,7</span><span class="c-of">/ 5</span></div><div class="c-facts"><b>28 provas</b>365 dias</div></div>
+                </div>
+              </div>
+              <div class="c-modal-wrap"></div>
+              <div class="c-modal">
+                <div class="c-modal-head">
+                  <div><h2>Registar prova</h2><p>Fábrica do Largo · 11 nov 2026</p></div>
+                  <span class="c-iconbtn"><svg class="i"><use href="#i-close"/></svg></span>
+                </div>
+                <div class="c-field"><span><b>1.</b> Sabor</span><div class="c-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="c-field"><span><b>2.</b> Textura do leite</span><div class="c-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="c-field"><span><b>3.</b> Temperatura</span><div class="c-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="c-field"><span><b>4.</b> Qualidade-preço</span><div class="c-scale"><span>1</span><span>2</span><span>3</span><span>4</span><span class="on">5</span></div></div>
+                <div class="c-field"><span>Preço pago</span><div class="c-line"><span>2,80 €</span><b>EUR</b></div></div>
+                <div class="c-field"><span>Leite</span><div class="c-choice"><b>Inteiro</b><span>Aveia</span><span>Sem lactose</span></div></div>
+                <div class="c-field"><span>Tamanho</span><div class="c-choice"><b>Normal</b><span>Grande</span></div></div>
+                <div class="c-field"><span>Data da visita</span><div class="c-line"><span>11 nov 2026</span><b>hoje</b></div></div>
+                <div class="c-field" style="border-bottom-style:dotted"><span>Nota</span><div class="c-line" style="border:0;color:var(--app-ink-2)"><span>Opcional</span><b>0/280</b></div></div>
+                <span class="c-submit">Guardar prova</span>
+              </div>
+            </div>
+          </div>
+        </figure>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>As páginas fora desta seleção (a minha lista, sobre, como funciona, entrar) herdam a direção escolhida. Diz-me <b style="color:var(--board-text);font-weight:600">A</b>, <b style="color:var(--board-text);font-weight:600">B</b> ou <b style="color:var(--board-text);font-weight:600">C</b> e implemento nos componentes reais.</p>
+    <small>Método unslop, Damir Sokolovsky · CC BY 4.0</small>
+  </footer>
+</div>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+    var panels = Array.prototype.slice.call(document.querySelectorAll('[role="tabpanel"]'));
+
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+      });
+      panels.forEach(function (p) {
+        p.hidden = p.id !== 'panel-' + tab.id.replace('tab-', '');
+      });
+    }
+
+    tabs.forEach(function (tab, index) {
+      tab.addEventListener('click', function () { select(tab); });
+      tab.addEventListener('keydown', function (event) {
+        var next = null;
+        if (event.key === 'ArrowRight') next = tabs[(index + 1) % tabs.length];
+        if (event.key === 'ArrowLeft') next = tabs[(index - 1 + tabs.length) % tabs.length];
+        if (event.key === 'Home') next = tabs[0];
+        if (event.key === 'End') next = tabs[tabs.length - 1];
+        if (next) {
+          event.preventDefault();
+          next.focus();
+          select(next);
+        }
+      });
+    });
+  })();
+</script>

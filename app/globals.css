@@ -1,0 +1,224 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #faf7f2;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f1eae0;
+  --color-text: #241a14;
+  --color-text-muted: #6b5b50;
+  --color-border: #e3d9cc;
+  --color-accent: #b4532a;
+  --color-accent-text: #9c431f;
+  --color-accent-contrast: #ffffff;
+  --color-success: #2f6b4f;
+  --color-warning: #8a5200;
+  --color-danger: #a32a1f;
+  --color-focus: #2a5fa8;
+  --color-badge: #f7e7da;
+  --color-badge-ink: #9c431f;
+
+  --radius-input: 10px;
+  --radius-card: 16px;
+  --radius-sheet: 20px;
+
+  --container-app: 1120px;
+  --container-reading: 720px;
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --text-display: 2.625rem;
+  --text-display--line-height: 1.05;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin: 0;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-card border border-border bg-surface p-4;
+  }
+
+  .card-flat {
+    @apply rounded-card bg-surface-muted p-4;
+  }
+
+  .btn {
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-input border border-transparent px-4 text-base font-semibold no-underline transition-colors;
+  }
+
+  .btn-primary {
+    @apply border-accent bg-accent text-accent-contrast hover:brightness-95;
+  }
+
+  .btn-secondary {
+    @apply border-border bg-surface text-text hover:bg-surface-muted;
+  }
+
+  .btn-muted {
+    @apply bg-surface-muted text-text hover:brightness-95;
+  }
+
+  .btn-block {
+    @apply w-full;
+  }
+
+  .btn:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  .chip {
+    @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-border bg-surface px-4 text-sm font-semibold text-text;
+  }
+
+  .chip-active {
+    @apply border-accent bg-accent text-accent-contrast;
+  }
+
+  .field {
+    @apply grid gap-1.5;
+  }
+
+  .field > span {
+    @apply text-sm font-medium;
+  }
+
+  .input {
+    @apply min-h-11 w-full rounded-input border border-border bg-surface px-3.5 py-3 text-text;
+  }
+
+  .input-error {
+    @apply border-danger;
+  }
+
+  .display {
+    @apply text-3xl leading-tight font-semibold tracking-tight sm:text-4xl lg:text-display;
+  }
+
+  .display-sm {
+    @apply text-2xl leading-tight font-semibold tracking-tight sm:text-3xl lg:text-4xl;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold tracking-tight;
+  }
+
+  .lede {
+    @apply text-base text-text-muted;
+  }
+
+  .meta {
+    @apply text-sm text-text-muted;
+  }
+
+  .score-badge {
+    @apply inline-flex items-baseline gap-1 rounded-full bg-badge px-3 py-1.5 text-badge-ink;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .score-badge-value {
+    @apply text-2xl leading-none font-semibold tracking-tight;
+  }
+
+  .score-badge-unit {
+    @apply text-xs font-medium;
+  }
+
+  .score-badge--lg .score-badge-value {
+    @apply text-4xl;
+  }
+
+  .fact {
+    @apply rounded-lg bg-surface-muted px-2.5 py-1.5 text-sm text-text-muted;
+  }
+
+  .fact b {
+    @apply font-semibold text-text;
+  }
+
+  .bar-track {
+    @apply h-1.5 overflow-hidden rounded-full bg-surface-muted;
+  }
+
+  .bar-fill {
+    @apply h-full rounded-full bg-accent;
+  }
+
+  .avatar {
+    @apply inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-surface text-xs font-semibold text-accent-text;
+  }
+
+  .tabbar-link {
+    @apply flex min-h-11 flex-col items-center justify-center gap-0.5 px-1 py-2 text-xs font-medium text-text-muted no-underline;
+  }
+
+  .tabbar-link[aria-current='page'] {
+    @apply font-semibold text-text;
+  }
+
+  .tabbar-link[aria-current='page'] > :first-child {
+    color: var(--color-accent-text);
+  }
+
+  .maplibregl-canvas {
+    filter: sepia(0.4) saturate(0.55) hue-rotate(-6deg) brightness(1.04) contrast(0.96);
+  }
+
+  .map-pin {
+    @apply relative flex min-h-11 min-w-11 cursor-pointer items-end justify-center border-0 bg-transparent p-0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .map-pin img {
+    @apply pointer-events-none relative block w-auto;
+  }
+
+  .map-pin-score {
+    @apply absolute left-1/2 flex items-center justify-center rounded-full font-bold;
+    top: 45.5%;
+    width: 35px;
+    height: 35px;
+    transform: translate(-50%, -50%);
+    background: var(--color-accent);
+    color: var(--color-accent-contrast);
+    font-size: 14px;
+  }
+
+  .map-pin--selected .map-pin-score {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  .map-pin--saved img {
+    filter: drop-shadow(0 0 3px var(--color-focus)) drop-shadow(0 0 1px var(--color-focus));
+  }
+
+  .map-pin--selected {
+    @apply z-10;
+  }
+
+  .map-pin--selected img {
+    transform: scale(1.12);
+    transform-origin: bottom center;
+  }
+}
