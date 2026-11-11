@@ -1,4 +1,4 @@
-# Glossary
+# Glossary — Flat White Me
 
 Canonical vocabulary. Use these terms in code, UI copy, tests and docs. Do not invent synonyms.
 
