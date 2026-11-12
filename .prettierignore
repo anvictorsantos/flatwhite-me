@@ -4,6 +4,11 @@ generated
 public
 FlatWhiteMe
 docs
+data
+design
+coverage
 test-results
 playwright-report
+next-env.d.ts
 package-lock.json
+*.md
