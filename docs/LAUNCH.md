@@ -1,58 +1,136 @@
-# Launch checklist
+# Launch plan
 
-Status: not launched. Everything below must pass before public launch.
+Status: pre-launch, 2026-11-13. Target: Render web service (Frankfurt) + Neon Postgres (EU),
+domain `flatwhite.me` (registered, currently parked on Hostinger DNS).
 
-## Gate
+## Where things stand
 
-Public launch only when `docs/METRICS.sql` shows **≥100 visible ratings across ≥40 cafés**. Seed from real accounts only: import the directory, rate cafés yourself, invite 5–10 friends for one week. No fabricated users, ratings or notes.
+- `typecheck`, `lint`, 23 unit tests and `next build` pass locally (2026-11-13); CI is green on `main`.
+- `render.yaml` defines the Node web service, health check and env vars.
+- Local Postgres has 1,232 cafés (1,231 Overture + 1 admin-approved), `freguesia` filled on 1,002,
+  and 0 ratings. The `cafe_scores` materialized view, score/price/note checks and the partial unique
+  rating index exist only in that database, not in `prisma/schema.prisma`.
+- Sign-in, ratings, suggestions, admin review, account deletion, sitemap and metadata are implemented.
 
-## Environment
+## Blockers
 
-| Variable | Where |
-|---|---|
-| `DATABASE_URL` | Neon Postgres, EU region |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google Cloud console; redirect URI `https://flatwhite.me/auth/callback` |
-| `SESSION_SECRET` | 48 random bytes, per environment |
-| `ADMIN_EMAILS` | Comma-separated allowlist |
-| `SENTRY_DSN` | Sentry project, PII scrubbing on |
-| `NEXT_PUBLIC_SITE_URL` | `https://flatwhite.me` |
-| `NEXT_PUBLIC_MAP_STYLE_URL` | `https://tiles.openfreemap.org/styles/liberty` |
+Resolved in this pass:
 
-## Deploy
+1. ~~Pending UI work uncommitted on `main`.~~ Committed on `launch/readiness`.
+2. ~~`render.yaml` build lacked Prisma generate.~~ Build is now
+   `npm ci && npm run db:generate && npm run build`.
+3. ~~No reproducible schema for a fresh database.~~ `prisma/bootstrap.sql` holds the tables, enums,
+   `cafe_scores` view, checks and the partial unique rating index, applied once and not by the start
+   command. `prisma db push` stays unusable on Prisma 7 without a `prisma.config.ts`.
+4. ~~`/api/health` ignored the database.~~ It now runs `select 1` and returns 503 on failure; the pool
+   connect timeout is 5 s.
 
-1. Create the Render web service from `render.yaml`; attach the Neon `DATABASE_URL`.
-2. Confirm `npm run db:deploy` runs before start and `/api/health` returns 200.
-3. Point `flatwhite.me` at Render and verify HTTPS and canonical redirects.
-4. Register the production Google redirect URI.
-5. Run the Overture import against production once and check `docs/import-reports/`.
+Still blocked:
 
-## Before announcing
+5. No Overture import script is in the repo. Production cafés come from a one-time dump of the local
+   database. Re-imports need the importer rebuilt.
+6. No Sentry dependency or init exists. Launch with Render logs and `/api/health`, or add Sentry
+   first (decision below).
+7. Google OAuth has no production redirect URI and the consent screen is not published.
+8. The domain is parked; no Render service, Neon project or DNS records exist yet.
 
-- [ ] `npm run typecheck`, `npm test`, `npm run build` green in CI
-- [ ] `npm audit --audit-level=high` clean
-- [ ] Sign in with Google works on phone and desktop; session survives restart
-- [ ] Rating, edit, note lock, daily cap, want-to-try exercised on production
-- [ ] Suggestion submitted, approved by an admin, appears publicly
+## Phase 1 — Repo ready (done 2026-11-13)
+
+1. [x] Pending UI work committed on `launch/readiness`, PR open.
+2. [x] `render.yaml`: `buildCommand: npm ci && npm run db:generate && npm run build`.
+3. [x] `app/api/health/route.ts`: `select 1` through Prisma, 503 when it fails; payload free of
+   connection details.
+4. [x] `prisma/bootstrap.sql`: schema-only dump of the local database, excluding
+   `_prisma_migrations`, header noting it is a one-time bootstrap until migrations exist.
+5. [x] This document corrected.
+
+## Phase 2 — Database (agent runs, human supplies Neon credentials)
+
+1. Neon: project in AWS `eu-central-1` (Frankfurt), Postgres 16, one database. Copy the direct
+   (non-pooled) connection string; it must contain `sslmode=require`.
+2. Dump the directory from the local container:
+
+   ```bash
+   docker exec flatwhite-db pg_dump -U postgres -d flatwhite \
+     --data-only --no-owner --table='"Cafe"' --column-inserts > /tmp/flatwhite-cafes.sql
+   ```
+
+3. Apply schema, then data, then populate the view:
+
+   ```bash
+   psql "$PROD_DATABASE_URL" -v ON_ERROR_STOP=1 -f prisma/bootstrap.sql
+   psql "$PROD_DATABASE_URL" -v ON_ERROR_STOP=1 -f /tmp/flatwhite-cafes.sql
+   psql "$PROD_DATABASE_URL" -c 'REFRESH MATERIALIZED VIEW cafe_scores'
+   ```
+
+   `psql` is not installed on this machine; use `brew install libpq` or
+   `docker run --rm -i postgres:16-alpine psql "$PROD_DATABASE_URL" -f - < file`.
+
+4. Do not copy `User` or `Session` rows. The first Google sign-in creates the admin.
+5. Verify: 1,232 cafés, `cafe_scores` exists and is empty, the partial unique index on
+   `Rating ("userId","cafeId")` exists, the three check constraints exist, and the gate query in
+   `docs/METRICS.sql` returns `0 | 0`.
+
+## Phase 3 — Render
+
+1. Create the service from `render.yaml` (free plan, Frankfurt).
+2. Set `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS` (the owner's
+   Google address). `SESSION_SECRET` is generated by the blueprint; `NEXT_PUBLIC_SITE_URL` is
+   `https://flatwhite.me`.
+3. Deploy. Confirm the build ran Prisma generate and `/api/health` returns 200 with the DB ping.
+4. Free web services sleep after ~15 minutes idle; the first request then takes 30–60 s. Accept for
+   private beta; revisit before announcing.
+
+## Phase 4 — Google OAuth (human, Google Cloud console)
+
+1. Add `https://flatwhite.me/auth/callback` as an authorized redirect URI on the existing OAuth
+   client.
+2. Publish the consent screen (External → In production). `openid email profile` are non-sensitive
+   scopes, so no verification review; set app name, support email, privacy link
+   `https://flatwhite.me/privacidade` and logo.
+3. Sign in once with the `ADMIN_EMAILS` account and confirm `/admin` renders.
+
+## Phase 5 — Domain (human, Hostinger DNS + Render)
+
+1. Render → Custom Domains: add `flatwhite.me` and the `www` variant (redirect to apex).
+2. At Hostinger: apex ALIAS/A record to Render, `www` CNAME to `<service>.onrender.com`.
+3. Wait for the certificate, then verify `https://flatwhite.me`, the `www` → apex 301, and that
+   `sitemap.xml`, `robots.txt`, the manifest and the OG image all use `flatwhite.me`.
+4. Optional: Search Console, submit `https://flatwhite.me/sitemap.xml`.
+
+## Phase 6 — Production smoke (half day)
+
+- [ ] Anonymous browse, search, filters, map, café page, top 10, PT/EN landing
+- [ ] Google sign-in on phone and desktop; session survives a restart
+- [ ] Rate, edit, note lock, daily cap, want-to-try
+- [ ] Suggest a café, approve it as admin, see it publicly
+- [ ] Report and hide a rating and a note
 - [ ] Account deletion anonymises ratings and removes notes
-- [ ] Map loads on a mid-range Android phone; list works without map
-- [ ] Empty states seen with real data: no ranking, one café, no saved cafés
-- [ ] `/best-flat-white-lisbon` renders with JavaScript disabled, PT and EN
-- [ ] Lighthouse mobile SEO and Accessibility ≥95; axe no critical/serious
-- [ ] `robots.txt`, `sitemap.xml`, manifest, icons and OG image resolve on the domain
-- [ ] Sentry receives a deliberate test error; no email or note text in the event
-- [ ] Database backup exists and a restore into a scratch database was verified
-- [ ] Rollback rehearsed: redeploy the previous Render build
+- [ ] Map loads on a mid-range Android phone; list works without the map
+- [ ] Empty states with real data: no ranking, one café, nothing saved
+- [ ] `/best-flat-white-lisbon` renders without JavaScript, PT and EN
+- [ ] Lighthouse mobile SEO and accessibility ≥ 95; axe has no serious/critical finding
+- [ ] `robots.txt`, `sitemap.xml`, manifest, icons, OG image resolve on the domain
+- [ ] Rollback redeploy of the previous Render build succeeds
 
-## Rollback
+## Phase 7 — Private beta, then the gate
 
-Redeploy the previous Render deploy. Migrations are additive until launch, so a rollback needs no database change. If a bad import lands, re-run the previous Overture snapshot; `operating_status` is not a reliable closure signal.
+Seed with real visits only: rate cafés yourself, invite 5–10 friends, run `docs/METRICS.sql` weekly.
+Announce publicly only at **≥ 100 visible ratings across ≥ 40 cafés** (`docs/BRIEF.md`). Until then
+the URL stays private beta.
 
-## Weekly
+## Phase 8 — Operations
 
-Run `docs/METRICS.sql` and record ranked cafés, ratings, raters and returning raters. No third-party analytics.
+- **Backups:** dump Neon before launch and verify a restore into a scratch branch. Neon free includes
+  a short point-in-time window; take a manual `pg_dump` on a schedule if that window is too short.
+- **Rollback:** redeploy the previous Render build. Schema changes stay additive until launch; a bad
+  data change is restored from a Neon branch or dump.
+- **Monitoring:** Render logs plus `/api/health`. Sentry is deferred.
+- **Overture refresh:** no importer in the repo. The next monthly refresh needs it rebuilt; until
+  then the directory is frozen at the 2026-10-21 snapshot.
 
-## Known gaps
+## Decisions needed
 
-- Contact mailbox `contacto@flatwhite.me` must exist.
-- No ESLint/Prettier scripts yet; CI covers typecheck, unit tests, build and audit.
-- Map interaction has not been verified by an automated browser test.
+1. Sentry now or after launch (recommendation: after).
+2. Announce at the 100-rating gate, or open publicly earlier (recommendation: keep the gate).
+3. Free Render cold starts acceptable for beta (recommendation: yes).
