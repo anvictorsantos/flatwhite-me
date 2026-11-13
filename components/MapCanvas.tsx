@@ -12,7 +12,9 @@ type MapCanvasProps = {
   cafes: readonly CafeSummary[]
   savedSlugs: readonly string[]
   selectedSlug?: string | undefined
+  focusSlug?: string | null | undefined
   onSelect: (slug: string) => void
+  onHover?: ((slug: string | null) => void) | undefined
   onVisibleChange: (slugs: string[]) => void
   locateNonce: number
   onLocateError: (message: string) => void
@@ -66,7 +68,9 @@ export function MapCanvas({
   cafes,
   savedSlugs,
   selectedSlug,
+  focusSlug,
   onSelect,
+  onHover,
   onVisibleChange,
   locateNonce,
   onLocateError,
@@ -78,6 +82,7 @@ export function MapCanvas({
   const markersRef = useRef<Marker[]>([])
   const cafesRef = useRef(cafes)
   const onSelectRef = useRef(onSelect)
+  const onHoverRef = useRef(onHover)
   const onVisibleRef = useRef(onVisibleChange)
   const onLocateErrorRef = useRef(onLocateError)
   const reportRef = useRef<() => void>(() => undefined)
@@ -88,9 +93,10 @@ export function MapCanvas({
   useEffect(() => {
     cafesRef.current = cafes
     onSelectRef.current = onSelect
+    onHoverRef.current = onHover
     onVisibleRef.current = onVisibleChange
     onLocateErrorRef.current = onLocateError
-  }, [cafes, onSelect, onVisibleChange, onLocateError])
+  }, [cafes, onSelect, onHover, onVisibleChange, onLocateError])
 
   useEffect(() => {
     let map: Map | null = null
@@ -110,6 +116,10 @@ export function MapCanvas({
           attributionControl: false,
         })
         map = instance
+        // Liberty sprite lacks a few POI icons; registering blanks avoids console errors.
+        instance.setMissingStyleImageResolver((id) => {
+          instance.addImage(id, { width: 1, height: 1, data: new Uint8Array(4) })
+        })
         instance.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
         mapRef.current = instance
 
@@ -132,6 +142,13 @@ export function MapCanvas({
         reportRef.current = report
 
         instance.on('load', () => {
+          if (cafesRef.current.length > 1) {
+            const bounds = new maplibregl.LngLatBounds()
+            for (const cafe of cafesRef.current) {
+              bounds.extend([cafe.longitude, cafe.latitude])
+            }
+            instance.fitBounds(bounds, { padding: 24, duration: 0, maxZoom: 13.5 })
+          }
           setReady(true)
           report()
         })
@@ -166,6 +183,8 @@ export function MapCanvas({
           cafe.slug === selectedSlug,
         )
         element.addEventListener('click', () => onSelectRef.current(cafe.slug))
+        element.addEventListener('mouseenter', () => onHoverRef.current?.(cafe.slug))
+        element.addEventListener('mouseleave', () => onHoverRef.current?.(null))
         return new maplibregl.Marker({ element, anchor: 'bottom' })
           .setLngLat([cafe.longitude, cafe.latitude])
           .addTo(map)
@@ -177,6 +196,14 @@ export function MapCanvas({
       cancelled = true
     }
   }, [cafes, savedSlugs, selectedSlug, ready])
+
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map || !ready || !focusSlug) return
+    const cafe = cafesRef.current.find((item) => item.slug === focusSlug)
+    if (!cafe) return
+    map.easeTo({ center: [cafe.longitude, cafe.latitude], duration: 400 })
+  }, [focusSlug, ready])
 
   useEffect(() => {
     if (locateNonce === 0) return
@@ -196,7 +223,7 @@ export function MapCanvas({
       () => onLocateErrorRef.current('Sem permissão de localização. O mapa fica em Lisboa.'),
       { enableHighAccuracy: false, timeout: 8000 },
     )
-  }, [locateNonce])
+  }, [locateNonce, ready])
 
   return (
     <div

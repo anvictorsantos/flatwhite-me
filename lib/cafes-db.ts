@@ -74,7 +74,7 @@ function toSummary(row: BaseRow, dims: Dims | null = null): CafeSummary {
 export async function listCafeSummaries(): Promise<CafeSummary[]> {
   const rows = await prisma.$queryRaw<BaseRow[]>`
     ${baseQuery}
-    ORDER BY s.score DESC NULLS LAST, s.sample_size DESC NULLS LAST, c.name ASC
+    ORDER BY s.score DESC NULLS LAST, s.sample_size DESC NULLS LAST, (c.source = 'user') DESC, c.name ASC
   `
   return rows.map((row) => toSummary(row))
 }

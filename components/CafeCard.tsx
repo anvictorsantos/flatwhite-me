@@ -14,10 +14,16 @@ export function CafeCard({
   cafe,
   action = 'rate',
   featured = false,
+  selected = false,
+  onHover,
+  onSelect,
 }: {
   cafe: CafeSummary
   action?: 'rate' | 'remove'
   featured?: boolean
+  selected?: boolean
+  onHover?: () => void
+  onSelect?: () => void
 }) {
   const router = useRouter()
   const { isSaved, toggleSaved } = useStore()
@@ -25,7 +31,11 @@ export function CafeCard({
   const saved = isSaved(cafe.slug)
 
   return (
-    <article className="card grid gap-3">
+    <article
+      className={`card grid gap-3 ${selected ? 'ring-2 ring-accent' : ''}`}
+      onMouseEnter={onHover}
+      onClick={onSelect}
+    >
       <div className="flex items-start justify-between gap-3">
         <div className="grid min-w-0 gap-1">
           <h3 className="text-base leading-tight font-semibold tracking-tight">

@@ -8,10 +8,18 @@ export function MapPreview({
   cafes,
   onVisibleChange,
   heightClass,
+  locateNonce = 0,
+  focusSlug,
+  onSelect,
+  onHover,
 }: {
   cafes: readonly CafeSummary[]
   onVisibleChange?: (slugs: string[]) => void
   heightClass?: string
+  locateNonce?: number
+  focusSlug?: string | null
+  onSelect?: (slug: string) => void
+  onHover?: (slug: string | null) => void
 }) {
   const { saved } = useStore()
 
@@ -19,9 +27,11 @@ export function MapPreview({
     <MapCanvas
       cafes={cafes}
       savedSlugs={saved}
-      onSelect={() => undefined}
+      focusSlug={focusSlug}
+      onSelect={onSelect ?? (() => undefined)}
+      onHover={onHover}
       onVisibleChange={onVisibleChange ?? (() => undefined)}
-      locateNonce={0}
+      locateNonce={locateNonce}
       onLocateError={() => undefined}
       heightClass={heightClass}
     />
