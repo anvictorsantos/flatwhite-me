@@ -2,8 +2,31 @@ import { siteUrl } from '@/lib/site'
 
 export type Coordinates = { latitude: number; longitude: number }
 
+const MIN_INTERVAL_MS = 1000
+const MAX_WAIT_MS = 3000
+let nextSlot = 0
+
+// Nominatim bans clients that exceed ~1 request/second, so outbound calls are
+// serialised server-wide instead of trusting per-request pacing.
+export function reserveNominatimSlot(now: number): number | null {
+  const slot = Math.max(now, nextSlot)
+  if (slot - now > MAX_WAIT_MS) return null
+  nextSlot = slot + MIN_INTERVAL_MS
+  return slot
+}
+
+async function acquireNominatimSlot(): Promise<boolean> {
+  const slot = reserveNominatimSlot(Date.now())
+  if (slot === null) return false
+  const wait = slot - Date.now()
+  if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait))
+  return true
+}
+
 // shortcut: Nominatim allows ~1 req/s, upgrade to a paid geocoder if suggestions grow.
 export async function geocodeAddress(address: string): Promise<Coordinates | null> {
+  if (!(await acquireNominatimSlot())) return null
+
   const url = new URL('https://nominatim.openstreetmap.org/search')
   url.searchParams.set('format', 'jsonv2')
   url.searchParams.set('limit', '1')
@@ -26,6 +49,8 @@ export async function geocodeAddress(address: string): Promise<Coordinates | nul
 }
 
 export async function reverseGeocode(latitude: number, longitude: number): Promise<string | null> {
+  if (!(await acquireNominatimSlot())) return null
+
   const url = new URL('https://nominatim.openstreetmap.org/reverse')
   url.searchParams.set('format', 'jsonv2')
   url.searchParams.set('lat', String(latitude))
