@@ -1,13 +1,17 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '@/generated/prisma/client'
+import { normalizeSslMode } from '@/lib/db-url'
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient }
 
 function createClient() {
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) throw new Error('DATABASE_URL is not set')
+  const url = process.env.DATABASE_URL
+  if (!url) throw new Error('DATABASE_URL is not set')
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString, connectionTimeoutMillis: 5000 }),
+    adapter: new PrismaPg({
+      connectionString: normalizeSslMode(url),
+      connectionTimeoutMillis: 5000,
+    }),
   })
 }
 
