@@ -508,6 +508,16 @@ CREATE UNIQUE INDEX "User_nickname_key" ON public."User" USING btree (nickname);
 
 
 --
+-- Name: User_nickname_lower_key; Type: INDEX; Schema: public; Owner: -
+--
+-- The app compares nicknames case-insensitively; enforce it in the database.
+-- Existing databases need this statement applied once by hand.
+--
+
+CREATE UNIQUE INDEX "User_nickname_lower_key" ON public."User" USING btree (lower(nickname));
+
+
+--
 -- Name: cafe_scores_cafe_id_key; Type: INDEX; Schema: public; Owner: -
 --
 
