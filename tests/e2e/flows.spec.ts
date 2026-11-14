@@ -145,6 +145,18 @@ test('admin closes and reopens a café', async ({ browser }) => {
 })
 
 test('account deletion removes the profile and keeps the user out', async ({ browser }) => {
+  const seeded = await db.query<{ id: string }>(
+    `insert into "Rating" (id,"cafeId","userId",taste,"milkTexture",temperature,value,"priceCents","milkType",size,"visitedOn",note,"updatedAt")
+     values (gen_random_uuid(), (select id from "Cafe" where slug=$1), $2, 4, 4, 4, 4, 300, 'whole', 'regular', current_date, 'nota privada', now())
+     returning id`,
+    [cafeSlug, deleting.id],
+  )
+  const ratingId = seeded.rows[0]?.id
+  await db.query(
+    `insert into "RatingRevision" (id,"ratingId",snapshot) values (gen_random_uuid(), $1, $2::jsonb)`,
+    [ratingId, JSON.stringify({ note: 'nota antiga' })],
+  )
+
   const context = await contextWith(browser, deleting)
   const page = await context.newPage()
   await page.goto('/privacidade')
@@ -156,5 +168,16 @@ test('account deletion removes the profile and keeps the user out', async ({ bro
     deleting.id,
   ])
   expect(row.rows[0]?.deleted).toBe(true)
+
+  const rating = await db.query('select "userId", note from "Rating" where id=$1', [ratingId])
+  expect(rating.rows[0]?.userId).toBeNull()
+  expect(rating.rows[0]?.note).toBeNull()
+  const revisions = await db.query<{ count: number }>(
+    'select count(*)::int as count from "RatingRevision" where "ratingId"=$1',
+    [ratingId],
+  )
+  expect(revisions.rows[0]?.count).toBe(0)
+
+  await db.query('delete from "Rating" where id=$1', [ratingId])
   await context.close()
 })
