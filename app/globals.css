@@ -21,6 +21,8 @@
   --radius-card: 16px;
   --radius-sheet: 20px;
 
+  --shadow-card: 0 0 0.5px rgb(36 26 20 / 0.16), 0 1px 1px rgb(36 26 20 / 0.12);
+
   --container-app: 1120px;
   --container-reading: 720px;
 
@@ -56,7 +58,7 @@
 
 @layer components {
   .card {
-    @apply rounded-card border border-border bg-surface p-4;
+    @apply rounded-card border border-border bg-surface p-4 shadow-card;
   }
 
   .card-flat {
@@ -64,11 +66,19 @@
   }
 
   .btn {
-    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-input border border-transparent px-4 text-base font-semibold no-underline transition-colors;
+    @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent px-4 text-base font-semibold no-underline;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 120ms ease;
+  }
+
+  .btn:active {
+    transform: scale(0.95);
   }
 
   .btn-primary {
-    @apply border-accent bg-accent text-accent-contrast hover:brightness-95;
+    @apply border-accent bg-accent text-accent-contrast hover:border-accent-text hover:bg-accent-text;
   }
 
   .btn-secondary {
@@ -76,7 +86,7 @@
   }
 
   .btn-muted {
-    @apply bg-surface-muted text-text hover:brightness-95;
+    @apply bg-surface-muted text-text hover:bg-border;
   }
 
   .btn-block {
@@ -89,6 +99,14 @@
 
   .chip {
     @apply inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border border-border bg-surface px-4 text-sm font-semibold text-text;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 120ms ease;
+  }
+
+  .chip:active {
+    transform: scale(0.95);
   }
 
   .chip-active {
@@ -220,5 +238,17 @@
   .map-pin--selected img {
     transform: scale(1.12);
     transform-origin: bottom center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .chip {
+    transition: none;
+  }
+
+  .btn:active,
+  .chip:active {
+    transform: none;
   }
 }

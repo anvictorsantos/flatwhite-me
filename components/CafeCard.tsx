@@ -48,8 +48,8 @@ export function CafeCard({
           onClick={() => void toggleSaved(cafe.slug)}
           className={
             saved
-              ? 'inline-flex size-11 shrink-0 items-center justify-center rounded-input bg-accent text-accent-contrast'
-              : 'inline-flex size-11 shrink-0 items-center justify-center rounded-input bg-surface-muted text-text-muted hover:bg-border'
+              ? 'inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-contrast transition-transform duration-150 active:scale-95'
+              : 'inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-text-muted transition-transform duration-150 hover:bg-border active:scale-95'
           }
         >
           <Icon name="heart" />

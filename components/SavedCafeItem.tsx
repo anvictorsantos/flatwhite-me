@@ -40,7 +40,7 @@ export function SavedCafeItem({ cafe }: { cafe: CafeSummary }) {
           await toggleSaved(cafe.slug)
           router.refresh()
         }}
-        className="inline-flex size-11 shrink-0 items-center justify-center rounded-input bg-accent text-accent-contrast disabled:opacity-50"
+        className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-contrast transition-transform duration-150 active:scale-95 disabled:opacity-50"
       >
         <Icon
           name="heart"
