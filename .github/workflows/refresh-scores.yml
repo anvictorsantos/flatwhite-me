@@ -1,0 +1,22 @@
+name: Refresh cafe scores
+
+# cafe_scores decays by age, so it must be recomputed even when nobody rates.
+# Requires the DATABASE_URL repository secret (Neon unpooled URL).
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh materialized view
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::warning::DATABASE_URL repository secret is not set"
+            exit 0
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'REFRESH MATERIALIZED VIEW CONCURRENTLY cafe_scores'
