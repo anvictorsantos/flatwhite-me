@@ -16,8 +16,7 @@ type MapCanvasProps = {
   onSelect: (slug: string) => void
   onHover?: ((slug: string | null) => void) | undefined
   onVisibleChange: (slugs: string[]) => void
-  locateNonce: number
-  onLocateError: (message: string) => void
+  locateTarget: { lon: number; lat: number } | null
   fill?: boolean
   heightClass?: string | undefined
 }
@@ -72,8 +71,7 @@ export function MapCanvas({
   onSelect,
   onHover,
   onVisibleChange,
-  locateNonce,
-  onLocateError,
+  locateTarget,
   fill = false,
   heightClass = 'h-[420px] w-full sm:h-[520px]',
 }: MapCanvasProps) {
@@ -84,7 +82,6 @@ export function MapCanvas({
   const onSelectRef = useRef(onSelect)
   const onHoverRef = useRef(onHover)
   const onVisibleRef = useRef(onVisibleChange)
-  const onLocateErrorRef = useRef(onLocateError)
   const reportRef = useRef<() => void>(() => undefined)
   const lastReportRef = useRef<string[] | null>(null)
   const [ready, setReady] = useState(false)
@@ -95,8 +92,7 @@ export function MapCanvas({
     onSelectRef.current = onSelect
     onHoverRef.current = onHover
     onVisibleRef.current = onVisibleChange
-    onLocateErrorRef.current = onLocateError
-  }, [cafes, onSelect, onHover, onVisibleChange, onLocateError])
+  }, [cafes, onSelect, onHover, onVisibleChange])
 
   useEffect(() => {
     let map: Map | null = null
@@ -206,24 +202,10 @@ export function MapCanvas({
   }, [focusSlug, ready])
 
   useEffect(() => {
-    if (locateNonce === 0) return
     const map = mapRef.current
-    if (!map) return
-    if (!navigator.geolocation) {
-      onLocateErrorRef.current('Este dispositivo não permite localização.')
-      return
-    }
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        map.flyTo({
-          center: [position.coords.longitude, position.coords.latitude],
-          zoom: 15,
-        })
-      },
-      () => onLocateErrorRef.current('Sem permissão de localização. O mapa fica em Lisboa.'),
-      { enableHighAccuracy: false, timeout: 8000 },
-    )
-  }, [locateNonce, ready])
+    if (!map || !ready || !locateTarget) return
+    map.flyTo({ center: [locateTarget.lon, locateTarget.lat], zoom: 15 })
+  }, [locateTarget, ready])
 
   return (
     <div

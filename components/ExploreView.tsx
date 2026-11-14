@@ -23,7 +23,8 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
   const [filters, setFilters] = useState<Filters>(defaultFilters)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [visibleSlugs, setVisibleSlugs] = useState<string[] | null>(null)
-  const [locateNonce, setLocateNonce] = useState(0)
+  const [locateTarget, setLocateTarget] = useState<{ lon: number; lat: number } | null>(null)
+  const [locateError, setLocateError] = useState('')
   const [isMobile, setIsMobile] = useState(false)
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
   const [focusSlug, setFocusSlug] = useState<string | null>(null)
@@ -36,11 +37,31 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
     return () => media.removeEventListener('change', update)
   }, [])
 
-  const locateMe = () => setLocateNonce((value) => value + 1)
+  // Must stay in the click handler: iOS drops the permission prompt if the call happens later in an effect.
+  const locateMe = () => {
+    setLocateError('')
+    if (!navigator.geolocation) {
+      setLocateError('Este dispositivo não permite localização.')
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) =>
+        setLocateTarget({ lon: position.coords.longitude, lat: position.coords.latitude }),
+      () => setLocateError('Sem permissão de localização. O mapa fica em Lisboa.'),
+      { enableHighAccuracy: false, timeout: 8000 },
+    )
+  }
 
   const focusCafe = (slug: string) => {
     setActiveSlug(slug)
     setFocusSlug(slug)
+  }
+
+  const selectFromMap = (slug: string) => {
+    focusCafe(slug)
+    document
+      .querySelector(`[data-cafe-slug="${slug}"]`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 
   const query = filters.query.trim().toLowerCase()
@@ -136,6 +157,14 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                 Limpar
               </button>
             ) : null}
+            {locateError ? (
+              <p
+                className="meta"
+                role="status"
+              >
+                {locateError}
+              </p>
+            ) : null}
           </div>
 
           {isMobile ? (
@@ -144,9 +173,9 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                 cafes={mapCafes}
                 heightClass="h-[350px]"
                 onVisibleChange={setVisibleSlugs}
-                locateNonce={locateNonce}
+                locateTarget={locateTarget}
                 focusSlug={focusSlug}
-                onSelect={setActiveSlug}
+                onSelect={selectFromMap}
                 onHover={setActiveSlug}
               />
             </div>
@@ -266,9 +295,9 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                   cafes={mapCafes}
                   heightClass="h-[860px]"
                   onVisibleChange={setVisibleSlugs}
-                  locateNonce={locateNonce}
+                  locateTarget={locateTarget}
                   focusSlug={focusSlug}
-                  onSelect={setActiveSlug}
+                  onSelect={selectFromMap}
                   onHover={setActiveSlug}
                 />
               )}
