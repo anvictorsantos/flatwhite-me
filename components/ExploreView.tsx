@@ -23,32 +23,25 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
   const [filters, setFilters] = useState<Filters>(defaultFilters)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [visibleSlugs, setVisibleSlugs] = useState<string[] | null>(null)
-  const [mapOnScreen, setMapOnScreen] = useState(false)
-  const [mapOpen, setMapOpen] = useState(false)
-  const [mapShown, setMapShown] = useState(false)
+  const [locateNonce, setLocateNonce] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+  const [activeSlug, setActiveSlug] = useState<string | null>(null)
+  const [focusSlug, setFocusSlug] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!mapOpen) return
-    const id = requestAnimationFrame(() => setMapShown(true))
-    return () => cancelAnimationFrame(id)
-  }, [mapOpen])
-
-  const toggleMap = () => {
-    if (mapOpen) {
-      setMapShown(false)
-      setMapOpen(false)
-      return
-    }
-    setMapOpen(true)
-  }
-
-  useEffect(() => {
-    const media = window.matchMedia('(min-width: 1280px)')
-    const update = () => setMapOnScreen(media.matches)
+    const media = window.matchMedia('(max-width: 1023px)')
+    const update = () => setIsMobile(media.matches)
     update()
     media.addEventListener('change', update)
     return () => media.removeEventListener('change', update)
   }, [])
+
+  const locateMe = () => setLocateNonce((value) => value + 1)
+
+  const focusCafe = (slug: string) => {
+    setActiveSlug(slug)
+    setFocusSlug(slug)
+  }
 
   const query = filters.query.trim().toLowerCase()
   const matches = useMemo(
@@ -68,7 +61,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
   const few = rated.filter((cafe) => cafe.ratings > 0 && cafe.ratings < 3)
   const hasControls = activeFilterCount(filters) > 0
   const unrated = hasControls ? [] : matches.filter((cafe) => cafe.ratings === 0)
-  const viewport = mapOnScreen && visibleSlugs ? new Set(visibleSlugs) : null
+  const viewport = visibleSlugs ? new Set(visibleSlugs) : null
   const inView = (list: CafeSummary[]) =>
     viewport ? list.filter((cafe) => viewport.has(cafe.slug)) : list
   const rankedInView = inView(ranked)
@@ -82,16 +75,10 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
   const onlyUnrated = rankedInView.length + fewInView.length === 0
 
   return (
-    <main className="px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
-      <div
-        className={
-          mapOpen
-            ? 'grid gap-8'
-            : 'grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-11'
-        }
-      >
-        <div className="grid content-start gap-4">
-          <div className="grid gap-3">
+    <main className="px-4 sm:px-6 lg:px-10 py-6 lg:py-8">
+      <div className="gap-8 grid lg:gap-11 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <div className="content-start gap-4 grid">
+          <div className="gap-3 grid">
             <h1 className="display">O teu próximo flat white.</h1>
             <p className="lede">
               Lisboa, ordenada por quem prova. Sem lugares pagos. Sem notas editoriais.
@@ -99,7 +86,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
           </div>
 
           <div className="relative">
-            <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-text-muted">
+            <span className="top-1/2 left-3.5 absolute text-text-muted -translate-y-1/2 pointer-events-none">
               <Icon name="search" />
             </span>
             <input
@@ -108,26 +95,8 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
               placeholder="Pesquisar café ou bairro"
               value={filters.query}
               onChange={(event) => setFilters({ ...filters, query: event.target.value })}
-              className="input pl-11"
+              className="pl-11 input"
             />
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 lg:hidden">
-            <Link
-              href="/"
-              className="btn btn-primary"
-            >
-              <Icon name="list" />
-              Lista
-            </Link>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={toggleMap}
-            >
-              <Icon name="map" />
-              Mapa
-            </button>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -141,7 +110,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
             <button
               type="button"
               className="chip"
-              onClick={toggleMap}
+              onClick={locateMe}
             >
               Perto de mim
             </button>
@@ -169,42 +138,40 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
             ) : null}
           </div>
 
-          {mapOpen ? (
-            <div
-              className={`max-w-[1200px] transition-opacity duration-200 ${
-                mapShown ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
+          {isMobile ? (
+            <div className="max-w-[1200px]">
               <MapPreview
                 cafes={mapCafes}
                 heightClass="h-[350px]"
                 onVisibleChange={setVisibleSlugs}
+                locateNonce={locateNonce}
+                focusSlug={focusSlug}
+                onSelect={setActiveSlug}
+                onHover={setActiveSlug}
               />
             </div>
           ) : null}
 
           <section
-            className="grid gap-3"
+            className="gap-3 grid"
             aria-labelledby="results-title"
           >
-            {mapOpen ? null : (
-              <div className="grid gap-1 lg:hidden">
-                <h2
-                  id="results-title"
-                  className="section-title"
-                >
-                  {heading.title}
-                </h2>
-                <p className="meta">
-                  {filtersActive(filters)
-                    ? heading.meta
-                    : `${rankedInView.length} no ranking · ${fewInView.length} com poucas avaliações · ${cafes.length} no diretório`}
-                </p>
-              </div>
-            )}
+            <div className="lg:hidden gap-1 grid">
+              <h2
+                id="results-title"
+                className="section-title"
+              >
+                {heading.title}
+              </h2>
+              <p className="meta">
+                {filtersActive(filters)
+                  ? heading.meta
+                  : `${rankedInView.length} no ranking · ${fewInView.length} com poucas avaliações · ${cafes.length} no diretório`}
+              </p>
+            </div>
 
-            {!mapOpen && total === 0 ? (
-              <div className="card-flat grid justify-items-start gap-3">
+            {total === 0 ? (
+              <div className="justify-items-start gap-3 grid card-flat">
                 <p>
                   {viewport
                     ? 'Nenhum café nesta zona do mapa. Arrasta o mapa ou limpa os filtros.'
@@ -226,21 +193,28 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
               </div>
             ) : null}
 
-            {!mapOpen && (rankedInView.length > 0 || fewInView.length > 0) ? (
+            {rankedInView.length > 0 || fewInView.length > 0 ? (
               <>
                 <div className="hidden lg:block">
-                  <div className="max-h-[625px] overflow-y-auto pr-1">
-                    <RankedTable cafes={[...rankedInView, ...fewInView]} />
+                  <div className="pr-1 max-h-[625px] overflow-y-auto">
+                    <RankedTable
+                      cafes={[...rankedInView, ...fewInView]}
+                      activeSlug={activeSlug}
+                      onFocusCafe={focusCafe}
+                    />
                   </div>
-                  <p className="meta mt-3">
+                  <p className="mt-3 meta">
                     Entram cafés com 3 ou mais avaliações nos últimos 365 dias.
                   </p>
                 </div>
-                <div className="grid gap-3 md:grid-cols-2 lg:hidden">
+                <div className="lg:hidden gap-3 grid md:grid-cols-2">
                   {[...rankedInView, ...fewInView].map((cafe) => (
                     <CafeCard
                       key={cafe.slug}
                       cafe={cafe}
+                      selected={activeSlug === cafe.slug}
+                      onHover={() => focusCafe(cafe.slug)}
+                      onSelect={() => focusCafe(cafe.slug)}
                     />
                   ))}
                 </div>
@@ -248,7 +222,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
             ) : null}
 
             {unratedInView.length > 0 ? (
-              <div className="grid gap-3 pt-2">
+              <div className="gap-3 grid pt-2">
                 <h3 className="section-title">Ainda sem avaliações</h3>
                 <p className="meta">
                   {unratedInView.length} {unratedInView.length === 1 ? 'café' : 'cafés'} no
@@ -259,16 +233,23 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                 </p>
                 {onlyUnrated ? (
                   <div className="hidden lg:block">
-                    <div className="max-h-[625px] overflow-y-auto pr-1">
-                      <RankedTable cafes={unratedShown} />
+                    <div className="pr-1 max-h-[625px] overflow-y-auto">
+                      <RankedTable
+                        cafes={unratedShown}
+                        activeSlug={activeSlug}
+                        onFocusCafe={focusCafe}
+                      />
                     </div>
                   </div>
                 ) : null}
-                <div className="grid gap-3 md:grid-cols-2 lg:hidden">
+                <div className="lg:hidden gap-3 grid md:grid-cols-2">
                   {unratedShown.map((cafe) => (
                     <CafeCard
                       key={cafe.slug}
                       cafe={cafe}
+                      selected={activeSlug === cafe.slug}
+                      onHover={() => focusCafe(cafe.slug)}
+                      onSelect={() => focusCafe(cafe.slug)}
                     />
                   ))}
                 </div>
@@ -277,37 +258,41 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
           </section>
         </div>
 
-        {mapOpen ? null : (
-          <aside className="hidden lg:block">
-            <div className="sticky top-24 grid gap-3">
-              <div className="relative">
+        <aside className="hidden lg:block">
+          <div className="top-24 sticky gap-3 grid">
+            <div className="relative">
+              {isMobile ? null : (
                 <MapPreview
                   cafes={mapCafes}
-                  heightClass="h-[236px]"
+                  heightClass="h-[860px]"
                   onVisibleChange={setVisibleSlugs}
+                  locateNonce={locateNonce}
+                  focusSlug={focusSlug}
+                  onSelect={setActiveSlug}
+                  onHover={setActiveSlug}
                 />
-                <span className="pointer-events-none absolute bottom-2 left-2 rounded-lg border border-border bg-surface px-2 py-1 text-xs font-medium">
-                  {mapCafes.length} cafés no mapa
-                </span>
-              </div>
-              {ranked[0] ? (
-                <CafeCard
-                  cafe={rankedInView[0] ?? ranked[0]}
-                  featured
-                />
-              ) : null}
-              {unrated.length > 0 ? (
-                <div className="card-flat">
-                  <p className="font-semibold">Ainda sem avaliações</p>
-                  <p className="meta mt-1">
-                    {unrated.length} {unrated.length === 1 ? 'café' : 'cafés'} no diretório. A
-                    primeira avaliação põe um café no mapa.
-                  </p>
-                </div>
-              ) : null}
+              )}
+              <span className="bottom-2 left-2 absolute bg-surface px-2 py-1 border border-border rounded-lg font-medium text-xs pointer-events-none">
+                {visibleSlugs?.length ?? mapCafes.length} cafés no mapa
+              </span>
             </div>
-          </aside>
-        )}
+            {ranked[0] ? (
+              <CafeCard
+                cafe={rankedInView[0] ?? ranked[0]}
+                featured
+              />
+            ) : null}
+            {unrated.length > 0 ? (
+              <div className="card-flat">
+                <p className="font-semibold">Ainda sem avaliações</p>
+                <p className="mt-1 meta">
+                  {unrated.length} {unrated.length === 1 ? 'café' : 'cafés'} no diretório. A
+                  primeira avaliação põe um café no mapa.
+                </p>
+              </div>
+            ) : null}
+          </div>
+        </aside>
       </div>
 
       <FiltersSheet
