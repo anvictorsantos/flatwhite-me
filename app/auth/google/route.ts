@@ -1,6 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import { cookies } from 'next/headers'
-import { OAUTH_NEXT_COOKIE, OAUTH_STATE_COOKIE, googleRedirectUri, safeNextPath } from '@/lib/auth'
+import { OAUTH_NEXT_COOKIE, OAUTH_STATE_COOKIE, googleRedirectUri } from '@/lib/auth'
+import { safeNextPath } from '@/lib/next-path'
 import { publicOrigin } from '@/lib/site'
 
 const STATE_MAX_AGE_SECONDS = 600
