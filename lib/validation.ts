@@ -5,7 +5,7 @@ const isoDate = z
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida')
   .refine((value) => {
     const date = new Date(value + 'T00:00:00Z')
-    if (Number.isNaN(date.getTime())) return false
+    if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) return false
     const fiveYearsAgo = new Date()
     fiveYearsAgo.setUTCFullYear(fiveYearsAgo.getUTCFullYear() - 5)
     return date <= new Date() && date >= fiveYearsAgo

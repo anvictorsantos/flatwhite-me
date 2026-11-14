@@ -29,6 +29,10 @@ describe('ratingSchema', () => {
     expect(ratingSchema.safeParse({ ...validRating, taste: 4.5 }).success).toBe(false)
   })
 
+  it('rejects a date that does not exist in the calendar', () => {
+    expect(ratingSchema.safeParse({ ...validRating, visitedOn: '2026-02-31' }).success).toBe(false)
+  })
+
   it('rejects a future visit date', () => {
     const tomorrow = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10)
     expect(ratingSchema.safeParse({ ...validRating, visitedOn: tomorrow }).success).toBe(false)
