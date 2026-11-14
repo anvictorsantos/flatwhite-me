@@ -1,20 +1,23 @@
 # Launch plan
 
-Status: pre-launch, 2026-11-13. Target: Render web service (Frankfurt) + Neon Postgres (EU),
+Status: pre-launch, 2026-11-14. Target: Render web service (Frankfurt) + Neon Postgres (EU),
 domain `flatwhite.me` (registered, currently parked on Hostinger DNS).
 
 ## Where things stand
 
-- `typecheck`, `lint`, 23 unit tests and `next build` pass locally (2026-11-13); CI is green on `main`.
+- `typecheck`, `lint`, 23 unit tests and `next build` pass locally (2026-11-14); CI is green on
+  `launch/readiness`.
 - `render.yaml` defines the Node web service, health check and env vars.
-- Local Postgres has 1,232 cafés (1,231 Overture + 1 admin-approved), `freguesia` filled on 1,002,
-  and 0 ratings. The `cafe_scores` materialized view, score/price/note checks and the partial unique
-  rating index exist only in that database, not in `prisma/schema.prisma`.
+- Neon project `snowy-breeze-44796398`, branch `production` (AWS `eu-central-1`), runs PostgreSQL 18.
+  It holds 1,232 cafés (1,231 Overture + 1 admin-approved), `freguesia` filled on 1,002, and 0
+  ratings. `cafe_scores`, the three rating checks and the partial unique rating index are applied.
+- Sentry project `santos-labs/flatwhite-me` receives app errors. A test error from
+  `GET /api/sentry-test` was confirmed as `FLATWHITE-ME-1`; the route was removed afterwards.
 - Sign-in, ratings, suggestions, admin review, account deletion, sitemap and metadata are implemented.
 
 ## Blockers
 
-Resolved in this pass:
+Resolved:
 
 1. ~~Pending UI work uncommitted on `main`.~~ Committed on `launch/readiness`.
 2. ~~`render.yaml` build lacked Prisma generate.~~ Build is now
@@ -24,15 +27,17 @@ Resolved in this pass:
    command. `prisma db push` stays unusable on Prisma 7 without a `prisma.config.ts`.
 4. ~~`/api/health` ignored the database.~~ It now runs `select 1` and returns 503 on failure; the pool
    connect timeout is 5 s.
+5. ~~No database.~~ Neon provisioned and verified: schema, 1,232 cafés, view refreshed, app served
+   the directory and `/api/health` returned 200 against it.
+6. ~~No error monitoring.~~ Sentry is installed and verified. `SENTRY_AUTH_TOKEN` is still missing, so
+   production stack traces stay minified until it is set on Render.
 
 Still blocked:
 
-5. No Overture import script is in the repo. Production cafés come from a one-time dump of the local
+7. No Overture import script is in the repo. Production cafés come from a one-time dump of the local
    database. Re-imports need the importer rebuilt.
-6. No Sentry dependency or init exists. Launch with Render logs and `/api/health`, or add Sentry
-   first (decision below).
-7. Google OAuth has no production redirect URI and the consent screen is not published.
-8. The domain is parked; no Render service, Neon project or DNS records exist yet.
+8. Google OAuth has no production redirect URI and the consent screen is not published.
+9. The domain is parked; no Render service or DNS records exist yet.
 
 ## Phase 1 — Repo ready (done 2026-11-13)
 
@@ -44,39 +49,41 @@ Still blocked:
    `_prisma_migrations`, header noting it is a one-time bootstrap until migrations exist.
 5. [x] This document corrected.
 
-## Phase 2 — Database (agent runs, human supplies Neon credentials)
+## Phase 2 — Database (done 2026-11-14)
 
-1. Neon: project in AWS `eu-central-1` (Frankfurt), Postgres 16, one database. Copy the direct
-   (non-pooled) connection string; it must contain `sslmode=require`.
-2. Dump the directory from the local container:
+`neon init` and `neon deploy` created project `snowy-breeze-44796398` branch `production`. Use the
+unpooled URL for schema and dumps; the app uses the pooled `DATABASE_URL`.
+
+1. Dump the directory from the local container:
 
    ```bash
    docker exec flatwhite-db pg_dump -U postgres -d flatwhite \
      --data-only --no-owner --table='"Cafe"' --column-inserts > /tmp/flatwhite-cafes.sql
    ```
 
-3. Apply schema, then data, then populate the view:
+2. Apply schema, then data, then populate the view against `DATABASE_URL_UNPOOLED`:
 
    ```bash
-   psql "$PROD_DATABASE_URL" -v ON_ERROR_STOP=1 -f prisma/bootstrap.sql
-   psql "$PROD_DATABASE_URL" -v ON_ERROR_STOP=1 -f /tmp/flatwhite-cafes.sql
-   psql "$PROD_DATABASE_URL" -c 'REFRESH MATERIALIZED VIEW cafe_scores'
+   psql "$DATABASE_URL_UNPOOLED" -v ON_ERROR_STOP=1 -f prisma/bootstrap.sql
+   psql "$DATABASE_URL_UNPOOLED" -v ON_ERROR_STOP=1 -f /tmp/flatwhite-cafes.sql
+   psql "$DATABASE_URL_UNPOOLED" -c 'REFRESH MATERIALIZED VIEW cafe_scores'
    ```
 
    `psql` is not installed on this machine; use `brew install libpq` or
-   `docker run --rm -i postgres:16-alpine psql "$PROD_DATABASE_URL" -f - < file`.
+   `docker run --rm -i postgres:16-alpine psql "$DATABASE_URL_UNPOOLED" -f - < file`.
 
-4. Do not copy `User` or `Session` rows. The first Google sign-in creates the admin.
-5. Verify: 1,232 cafés, `cafe_scores` exists and is empty, the partial unique index on
+3. Do not copy `User` or `Session` rows. The first Google sign-in creates the admin.
+4. Verify: 1,232 cafés, `cafe_scores` exists and is empty, the partial unique index on
    `Rating ("userId","cafeId")` exists, the three check constraints exist, and the gate query in
    `docs/METRICS.sql` returns `0 | 0`.
 
 ## Phase 3 — Render
 
 1. Create the service from `render.yaml` (free plan, Frankfurt).
-2. Set `DATABASE_URL`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS` (the owner's
-   Google address). `SESSION_SECRET` is generated by the blueprint; `NEXT_PUBLIC_SITE_URL` is
-   `https://flatwhite.me`.
+2. Set `DATABASE_URL` (Neon pooled), `DATABASE_URL_UNPOOLED`, `GOOGLE_CLIENT_ID`,
+   `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS` (the owner's Google address) and `NEXT_PUBLIC_SENTRY_DSN`.
+   `SESSION_SECRET` is generated by the blueprint; `NEXT_PUBLIC_SITE_URL` is
+   `https://flatwhite.me`. Add `SENTRY_AUTH_TOKEN` in the dashboard so the build uploads source maps.
 3. Deploy. Confirm the build ran Prisma generate and `/api/health` returns 200 with the DB ping.
 4. Free web services sleep after ~15 minutes idle; the first request then takes 30–60 s. Accept for
    private beta; revisit before announcing.
@@ -125,12 +132,13 @@ the URL stays private beta.
   a short point-in-time window; take a manual `pg_dump` on a schedule if that window is too short.
 - **Rollback:** redeploy the previous Render build. Schema changes stay additive until launch; a bad
   data change is restored from a Neon branch or dump.
-- **Monitoring:** Render logs plus `/api/health`. Sentry is deferred.
+- **Monitoring:** Render logs plus `/api/health`; Sentry project `santos-labs/flatwhite-me` for errors,
+  tracing at 0.1 and replay at 0.1/1.0. Add `SENTRY_AUTH_TOKEN` to the Render build for readable
+  stack traces.
 - **Overture refresh:** no importer in the repo. The next monthly refresh needs it rebuilt; until
   then the directory is frozen at the 2026-10-21 snapshot.
 
 ## Decisions needed
 
-1. Sentry now or after launch (recommendation: after).
-2. Announce at the 100-rating gate, or open publicly earlier (recommendation: keep the gate).
-3. Free Render cold starts acceptable for beta (recommendation: yes).
+1. Announce at the 100-rating gate, or open publicly earlier (recommendation: keep the gate).
+2. Free Render cold starts acceptable for beta (recommendation: yes).

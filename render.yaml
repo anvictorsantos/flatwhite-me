@@ -28,3 +28,5 @@ services:
         value: https://tiles.openfreemap.org/styles/liberty
       - key: NEXT_PUBLIC_SITE_URL
         value: https://flatwhite.me
+      - key: NEXT_PUBLIC_SENTRY_DSN
+        sync: false
