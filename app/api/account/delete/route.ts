@@ -7,6 +7,7 @@ export async function POST(request: Request) {
   if (!user) return Response.json({ error: 'unauthenticated' }, { status: 401 })
 
   await prisma.$transaction([
+    prisma.ratingRevision.deleteMany({ where: { rating: { userId: user.id } } }),
     prisma.wantToTry.deleteMany({ where: { userId: user.id } }),
     prisma.session.deleteMany({ where: { userId: user.id } }),
     prisma.rating.updateMany({ where: { userId: user.id }, data: { userId: null, note: null } }),
