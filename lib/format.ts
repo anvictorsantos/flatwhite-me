@@ -14,12 +14,6 @@ export function fmtPrice(cents: number | null): string {
   return cents === null ? '' : `${(cents / 100).toFixed(2).replace('.', ',')} €`
 }
 
-export function addDays(iso: string, days: number): string {
-  const date = new Date(iso + 'T12:00:00')
-  date.setDate(date.getDate() + days)
-  return date.toISOString().slice(0, 10)
-}
-
 export function todayIso(): string {
   return new Date().toISOString().slice(0, 10)
 }
