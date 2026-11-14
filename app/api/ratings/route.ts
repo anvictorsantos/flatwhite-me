@@ -1,3 +1,4 @@
+import { Prisma } from '@/generated/prisma/client'
 import { getSessionUser } from '@/lib/auth'
 import { refreshCafeScores } from '@/lib/cafes-db'
 import { prisma } from '@/lib/db'
@@ -70,33 +71,46 @@ export async function POST(request: Request) {
     note: data.note ?? null,
   }
 
-  const ratingId = await prisma.$transaction(async (tx) => {
-    if (existing) {
-      await tx.ratingRevision.create({
-        data: {
-          ratingId: existing.id,
-          snapshot: {
-            taste: existing.taste,
-            milkTexture: existing.milkTexture,
-            temperature: existing.temperature,
-            value: existing.value,
-            priceCents: existing.priceCents,
-            milkType: existing.milkType,
-            size: existing.size,
-            visitedOn: existing.visitedOn.toISOString().slice(0, 10),
-            note: existing.note,
+  const ratingId = await prisma
+    .$transaction(async (tx) => {
+      if (existing) {
+        await tx.ratingRevision.create({
+          data: {
+            ratingId: existing.id,
+            snapshot: {
+              taste: existing.taste,
+              milkTexture: existing.milkTexture,
+              temperature: existing.temperature,
+              value: existing.value,
+              priceCents: existing.priceCents,
+              milkType: existing.milkType,
+              size: existing.size,
+              visitedOn: existing.visitedOn.toISOString().slice(0, 10),
+              note: existing.note,
+            },
           },
-        },
+        })
+        await tx.rating.update({ where: { id: existing.id }, data: values })
+        return existing.id
+      }
+      const created = await tx.rating.create({
+        data: { ...values, cafeId: cafe.id, userId: user.id },
+        select: { id: true },
       })
-      await tx.rating.update({ where: { id: existing.id }, data: values })
-      return existing.id
-    }
-    const created = await tx.rating.create({
-      data: { ...values, cafeId: cafe.id, userId: user.id },
-      select: { id: true },
+      return created.id
     })
-    return created.id
-  })
+    .catch(async (error: unknown) => {
+      // Two simultaneous first ratings race on the partial unique index; the other request won.
+      const isUniqueViolation =
+        error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002'
+      if (existing || !isUniqueViolation) throw error
+      const raced = await prisma.rating.findFirst({
+        where: { userId: user.id, cafeId: cafe.id },
+        select: { id: true },
+      })
+      if (!raced) throw error
+      return raced.id
+    })
 
   await refreshCafeScores()
 
