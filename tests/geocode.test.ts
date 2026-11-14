@@ -34,6 +34,26 @@ describe('geocodeAddress', () => {
   })
 })
 
+describe('reserveNominatimSlot', () => {
+  it('spaces requests one second apart', async () => {
+    vi.resetModules()
+    const { reserveNominatimSlot } = await import('@/lib/geocode')
+    expect(reserveNominatimSlot(1000)).toBe(1000)
+    expect(reserveNominatimSlot(1000)).toBe(2000)
+    expect(reserveNominatimSlot(1500)).toBe(3000)
+  })
+
+  it('drops callers that would wait too long', async () => {
+    vi.resetModules()
+    const { reserveNominatimSlot } = await import('@/lib/geocode')
+    expect(reserveNominatimSlot(0)).toBe(0)
+    expect(reserveNominatimSlot(0)).toBe(1000)
+    expect(reserveNominatimSlot(0)).toBe(2000)
+    expect(reserveNominatimSlot(0)).toBe(3000)
+    expect(reserveNominatimSlot(0)).toBeNull()
+  })
+})
+
 describe('reverseGeocode', () => {
   it('returns the display name', async () => {
     vi.stubGlobal(
