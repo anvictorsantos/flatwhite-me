@@ -610,6 +610,9 @@ ALTER TABLE ONLY public."WantToTry"
     ADD CONSTRAINT "WantToTry_userId_fkey" FOREIGN KEY ("userId") REFERENCES public."User"(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
+-- Created WITH NO DATA; populate it so CONCURRENTLY refreshes work on the first rating.
+REFRESH MATERIALIZED VIEW public.cafe_scores;
+
 --
 -- PostgreSQL database dump complete
 --

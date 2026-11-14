@@ -147,5 +147,12 @@ export async function getCafeSummary(slug: string): Promise<CafeSummary | null> 
 }
 
 export async function refreshCafeScores(): Promise<void> {
-  await prisma.$executeRawUnsafe('REFRESH MATERIALIZED VIEW CONCURRENTLY cafe_scores')
+  try {
+    await prisma.$executeRaw`REFRESH MATERIALIZED VIEW CONCURRENTLY cafe_scores`
+  } catch (error) {
+    // The write that triggered this already committed, so a failed refresh must not
+    // fail the request. A plain refresh also populates a never-refreshed view.
+    console.error('refresh cafe_scores:', error)
+    await prisma.$executeRaw`REFRESH MATERIALIZED VIEW cafe_scores`.catch(() => {})
+  }
 }
