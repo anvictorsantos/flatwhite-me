@@ -4,21 +4,10 @@ import { prisma } from '@/lib/db'
 import { publicOrigin } from '@/lib/site'
 import { freguesiaForPoint } from '@/lib/freguesias'
 import { geocodeAddress } from '@/lib/geocode'
+import { readPayload } from '@/lib/http'
 import { normalizeName, nextSlug, slugify } from '@/lib/slugs'
 
 type Params = { params: Promise<{ id: string }> }
-
-async function payload(request: Request): Promise<Record<string, string>> {
-  const type = request.headers.get('content-type') ?? ''
-  if (type.includes('application/json')) {
-    const body: unknown = await request.json().catch(() => ({}))
-    return body && typeof body === 'object' ? (body as Record<string, string>) : {}
-  }
-  const form = await request.formData()
-  return Object.fromEntries(
-    Array.from(form.entries()).map(([key, value]) => [key, typeof value === 'string' ? value : '']),
-  )
-}
 
 export async function POST(request: Request, { params }: Params) {
   const user = await getSessionUser()
@@ -27,7 +16,7 @@ export async function POST(request: Request, { params }: Params) {
   }
 
   const { id } = await params
-  const data = await payload(request)
+  const data = await readPayload(request)
   const action = data.action
   const suggestion = await prisma.cafeSuggestion.findUnique({ where: { id } })
   if (!suggestion || suggestion.status !== SuggestionStatus.pending) {

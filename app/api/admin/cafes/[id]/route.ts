@@ -2,21 +2,10 @@ import { CafeStatus } from '@/generated/prisma/enums'
 import { getSessionUser } from '@/lib/auth'
 import { refreshCafeScores } from '@/lib/cafes-db'
 import { prisma } from '@/lib/db'
+import { readPayload } from '@/lib/http'
 import { publicOrigin } from '@/lib/site'
 
 type Params = { params: Promise<{ id: string }> }
-
-async function payload(request: Request): Promise<Record<string, string>> {
-  const type = request.headers.get('content-type') ?? ''
-  if (type.includes('application/json')) {
-    const body: unknown = await request.json().catch(() => ({}))
-    return body && typeof body === 'object' ? (body as Record<string, string>) : {}
-  }
-  const form = await request.formData()
-  return Object.fromEntries(
-    Array.from(form.entries()).map(([key, value]) => [key, typeof value === 'string' ? value : '']),
-  )
-}
 
 export async function POST(request: Request, { params }: Params) {
   const user = await getSessionUser()
@@ -31,7 +20,7 @@ export async function POST(request: Request, { params }: Params) {
   })
   if (!cafe) return Response.json({ error: 'not_found' }, { status: 404 })
 
-  const data = await payload(request)
+  const data = await readPayload(request)
   const action = data.action
   const isForm = !request.headers.get('content-type')?.includes('application/json')
 
