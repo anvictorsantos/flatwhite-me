@@ -18,7 +18,10 @@ export function RankedTable({
   return (
     <ol className="grid border-t border-text">
       {cafes.map((cafe, index) => (
-        <li key={cafe.slug}>
+        <li
+          key={cafe.slug}
+          data-cafe-slug={cafe.slug}
+        >
           <Link
             href={`/cafe/${cafe.slug}`}
             onMouseEnter={() => onFocusCafe?.(cafe.slug)}
