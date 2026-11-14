@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { AppBar } from '@/components/AppBar'
 
+export const dynamic = 'force-dynamic'
+
 const WEIGHTS = [
   { label: 'Sabor', value: '40%' },
   { label: 'Textura do leite', value: '30%' },
