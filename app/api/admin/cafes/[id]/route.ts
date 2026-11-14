@@ -2,6 +2,7 @@ import { CafeStatus } from '@/generated/prisma/enums'
 import { getSessionUser } from '@/lib/auth'
 import { refreshCafeScores } from '@/lib/cafes-db'
 import { prisma } from '@/lib/db'
+import { publicOrigin } from '@/lib/site'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -56,6 +57,6 @@ export async function POST(request: Request, { params }: Params) {
   if (update.status) await refreshCafeScores()
 
   return isForm
-    ? Response.redirect(new URL('/admin', request.url), 303)
+    ? Response.redirect(new URL('/admin', publicOrigin(request)), 303)
     : Response.json({ status: update.status ?? cafe.status })
 }

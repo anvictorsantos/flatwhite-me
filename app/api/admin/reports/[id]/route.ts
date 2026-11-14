@@ -1,6 +1,7 @@
 import { ReportStatus } from '@/generated/prisma/enums'
 import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { publicOrigin } from '@/lib/site'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -49,6 +50,6 @@ export async function POST(request: Request, { params }: Params) {
 
   const isForm = !request.headers.get('content-type')?.includes('application/json')
   return isForm
-    ? Response.redirect(new URL('/admin', request.url), 303)
+    ? Response.redirect(new URL('/admin', publicOrigin(request)), 303)
     : Response.json({ status: next })
 }

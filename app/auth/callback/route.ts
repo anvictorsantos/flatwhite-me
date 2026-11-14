@@ -8,6 +8,7 @@ import {
   googleRedirectUri,
 } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { publicOrigin } from '@/lib/site'
 
 const tokenSchema = z.object({
   access_token: z.string().min(1),
@@ -22,14 +23,14 @@ const profileSchema = z.object({
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
+  const origin = publicOrigin(request)
   const store = await cookies()
   const expectedState = store.get(OAUTH_STATE_COOKIE)?.value
   const nextPath = store.get(OAUTH_NEXT_COOKIE)?.value ?? '/'
   store.delete(OAUTH_STATE_COOKIE)
   store.delete(OAUTH_NEXT_COOKIE)
 
-  const fail = (reason: string) =>
-    Response.redirect(new URL(`/entrar?auth=${reason}`, url.origin), 302)
+  const fail = (reason: string) => Response.redirect(new URL(`/entrar?auth=${reason}`, origin), 302)
 
   const code = url.searchParams.get('code')
   const state = url.searchParams.get('state')
@@ -39,7 +40,7 @@ export async function GET(request: Request) {
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET
   if (!clientId || !clientSecret) return fail('config')
 
-  const redirectUri = googleRedirectUri(url.origin)
+  const redirectUri = googleRedirectUri(origin)
   const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -86,5 +87,5 @@ export async function GET(request: Request) {
   })
 
   await createSession(user.id)
-  return Response.redirect(new URL(nextPath, url.origin), 303)
+  return Response.redirect(new URL(nextPath, origin), 303)
 }

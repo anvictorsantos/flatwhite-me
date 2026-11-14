@@ -1,5 +1,6 @@
 import { destroySession, getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { publicOrigin } from '@/lib/site'
 
 export async function POST(request: Request) {
   const user = await getSessionUser()
@@ -26,6 +27,6 @@ export async function POST(request: Request) {
 
   const isForm = !request.headers.get('content-type')?.includes('application/json')
   return isForm
-    ? Response.redirect(new URL('/', request.url), 303)
+    ? Response.redirect(new URL('/', publicOrigin(request)), 303)
     : Response.json({ status: 'deleted' })
 }

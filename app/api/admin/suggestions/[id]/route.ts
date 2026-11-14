@@ -1,6 +1,7 @@
 import { CafeSource, CafeStatus, SuggestionStatus } from '@/generated/prisma/enums'
 import { getSessionUser } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+import { publicOrigin } from '@/lib/site'
 import { freguesiaForPoint } from '@/lib/freguesias'
 import { geocodeAddress } from '@/lib/geocode'
 import { normalizeName, nextSlug, slugify } from '@/lib/slugs'
@@ -35,7 +36,7 @@ export async function POST(request: Request, { params }: Params) {
 
   const redirect = request.headers.get('content-type')?.includes('application/json')
     ? null
-    : new URL('/admin', request.url)
+    : new URL('/admin', publicOrigin(request))
 
   if (action === 'reject') {
     await prisma.cafeSuggestion.update({
