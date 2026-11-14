@@ -209,6 +209,7 @@
 
   .map-pin img {
     @apply pointer-events-none relative block w-auto;
+    transition: transform 200ms ease-out;
   }
 
   .map-pin-score {
@@ -220,6 +221,9 @@
     background: var(--color-accent);
     color: var(--color-accent-contrast);
     font-size: 14px;
+    transition:
+      background-color 200ms ease-out,
+      color 200ms ease-out;
   }
 
   .map-pin--selected .map-pin-score {
@@ -250,5 +254,10 @@
   .btn:active,
   .chip:active {
     transform: none;
+  }
+
+  .map-pin img,
+  .map-pin-score {
+    transition: none;
   }
 }

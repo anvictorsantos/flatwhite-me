@@ -32,6 +32,7 @@ export function CafeCard({
 
   return (
     <article
+      data-cafe-slug={cafe.slug}
       className={`card grid gap-3 ${selected ? 'ring-2 ring-accent' : ''}`}
       onMouseEnter={onHover}
       onClick={onSelect}

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import type { Map, Marker } from 'maplibre-gl'
+import type { Map as MapLibreMap, Marker } from 'maplibre-gl'
 import type { CafeSummary } from '@/lib/types'
 import { fmtScore } from '@/lib/format'
 
@@ -28,25 +28,39 @@ const PINS = {
   selected: { src: '/pins/map_pin_cup.png', height: 55 },
 } as const
 
-function markerElement(cafe: CafeSummary, saved: boolean, selected: boolean): HTMLButtonElement {
-  const element = document.createElement('button')
-  element.type = 'button'
-  const kind = cafe.ratings >= 3 ? 'ranked' : cafe.ratings > 0 ? 'few' : 'unrated'
-  element.className = [
-    'map-pin',
-    saved ? 'map-pin--saved' : '',
-    selected ? 'map-pin--selected' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
+type MarkerEntry = { marker: Marker; element: HTMLButtonElement }
+
+function pinKind(cafe: CafeSummary) {
+  return cafe.ratings >= 3 ? 'ranked' : cafe.ratings > 0 ? 'few' : 'unrated'
+}
+
+function applyPinState(
+  element: HTMLButtonElement,
+  cafe: CafeSummary,
+  saved: boolean,
+  selected: boolean,
+) {
+  const config = selected ? PINS.selected : PINS[pinKind(cafe)]
+  element.classList.toggle('map-pin--saved', saved)
+  element.classList.toggle('map-pin--selected', selected)
   element.setAttribute(
     'aria-label',
     `${cafe.name}${cafe.ratings > 0 ? `, ${fmtScore(cafe.score)}` : ', sem nota'}${
       saved ? ', guardado' : ''
     }`,
   )
+  const pin = element.querySelector('img')
+  if (!pin) return
+  if (pin.getAttribute('src') !== config.src) pin.src = config.src
+  pin.style.height = `${config.height}px`
+}
 
-  if (kind === 'ranked') {
+function markerElement(cafe: CafeSummary, saved: boolean, selected: boolean): HTMLButtonElement {
+  const element = document.createElement('button')
+  element.type = 'button'
+  element.className = 'map-pin'
+
+  if (pinKind(cafe) === 'ranked') {
     const score = document.createElement('span')
     score.className = 'map-pin-score'
     score.textContent = fmtScore(cafe.score)
@@ -54,11 +68,9 @@ function markerElement(cafe: CafeSummary, saved: boolean, selected: boolean): HT
   }
 
   const pin = document.createElement('img')
-  const config = selected ? PINS.selected : PINS[kind]
-  pin.src = config.src
-  pin.style.height = `${config.height}px`
   pin.alt = ''
   element.append(pin)
+  applyPinState(element, cafe, saved, selected)
 
   return element
 }
@@ -76,9 +88,12 @@ export function MapCanvas({
   heightClass = 'h-[420px] w-full sm:h-[520px]',
 }: MapCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const mapRef = useRef<Map | null>(null)
-  const markersRef = useRef<Marker[]>([])
+  const mapRef = useRef<MapLibreMap | null>(null)
+  const markersRef = useRef<Map<string, MarkerEntry>>(new Map())
+  const renderedKeyRef = useRef('')
   const cafesRef = useRef(cafes)
+  const savedSlugsRef = useRef(savedSlugs)
+  const selectedSlugRef = useRef(selectedSlug)
   const onSelectRef = useRef(onSelect)
   const onHoverRef = useRef(onHover)
   const onVisibleRef = useRef(onVisibleChange)
@@ -89,13 +104,20 @@ export function MapCanvas({
 
   useEffect(() => {
     cafesRef.current = cafes
+    savedSlugsRef.current = savedSlugs
+    selectedSlugRef.current = selectedSlug
     onSelectRef.current = onSelect
     onHoverRef.current = onHover
     onVisibleRef.current = onVisibleChange
-  }, [cafes, onSelect, onHover, onVisibleChange])
+    markersRef.current.forEach(({ element }, slug) => {
+      const cafe = cafes.find((item) => item.slug === slug)
+      if (cafe) applyPinState(element, cafe, savedSlugs.includes(slug), slug === selectedSlug)
+    })
+  }, [cafes, savedSlugs, selectedSlug, onSelect, onHover, onVisibleChange])
 
   useEffect(() => {
-    let map: Map | null = null
+    const markers = markersRef.current
+    let map: MapLibreMap | null = null
     let cancelled = false
 
     void (async () => {
@@ -156,8 +178,8 @@ export function MapCanvas({
 
     return () => {
       cancelled = true
-      markersRef.current.forEach((marker) => marker.remove())
-      markersRef.current = []
+      markers.forEach(({ marker }) => marker.remove())
+      markers.clear()
       map?.remove()
       mapRef.current = null
     }
@@ -166,39 +188,46 @@ export function MapCanvas({
   useEffect(() => {
     const map = mapRef.current
     if (!map || !ready) return
+    const list = cafesRef.current
+    const key = list.map((cafe) => `${cafe.slug}:${cafe.latitude}:${cafe.longitude}`).join('|')
+    // Rebuilding markers drops hover state mid-interaction, so only rebuild when the cafes really change.
+    if (key === renderedKeyRef.current && markersRef.current.size > 0) return
+    renderedKeyRef.current = key
     let cancelled = false
 
     void (async () => {
       const maplibregl = await import('maplibre-gl')
       if (cancelled) return
-      markersRef.current.forEach((marker) => marker.remove())
-      markersRef.current = cafes.map((cafe) => {
+      markersRef.current.forEach(({ marker }) => marker.remove())
+      markersRef.current.clear()
+      for (const cafe of list) {
         const element = markerElement(
           cafe,
-          savedSlugs.includes(cafe.slug),
-          cafe.slug === selectedSlug,
+          savedSlugsRef.current.includes(cafe.slug),
+          cafe.slug === selectedSlugRef.current,
         )
         element.addEventListener('click', () => onSelectRef.current(cafe.slug))
         element.addEventListener('mouseenter', () => onHoverRef.current?.(cafe.slug))
         element.addEventListener('mouseleave', () => onHoverRef.current?.(null))
-        return new maplibregl.Marker({ element, anchor: 'bottom' })
+        const marker = new maplibregl.Marker({ element, anchor: 'bottom' })
           .setLngLat([cafe.longitude, cafe.latitude])
           .addTo(map)
-      })
+        markersRef.current.set(cafe.slug, { marker, element })
+      }
       reportRef.current()
     })()
 
     return () => {
       cancelled = true
     }
-  }, [cafes, savedSlugs, selectedSlug, ready])
+  }, [cafes, ready])
 
   useEffect(() => {
     const map = mapRef.current
     if (!map || !ready || !focusSlug) return
     const cafe = cafesRef.current.find((item) => item.slug === focusSlug)
     if (!cafe) return
-    map.easeTo({ center: [cafe.longitude, cafe.latitude], duration: 400 })
+    map.easeTo({ center: [cafe.longitude, cafe.latitude], duration: 600 })
   }, [focusSlug, ready])
 
   useEffect(() => {

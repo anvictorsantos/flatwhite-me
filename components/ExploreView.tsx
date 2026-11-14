@@ -27,7 +27,9 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
   const [locateError, setLocateError] = useState('')
   const [isMobile, setIsMobile] = useState(false)
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
+  const [hoverSlug, setHoverSlug] = useState<string | null>(null)
   const [focusSlug, setFocusSlug] = useState<string | null>(null)
+  const highlightSlug = hoverSlug ?? activeSlug
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 1023px)')
@@ -59,6 +61,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
 
   const selectFromMap = (slug: string) => {
     focusCafe(slug)
+    setHoverSlug(null)
     document
       .querySelector(`[data-cafe-slug="${slug}"]`)
       ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -174,9 +177,10 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                 heightClass="h-[350px]"
                 onVisibleChange={setVisibleSlugs}
                 locateTarget={locateTarget}
+                selectedSlug={highlightSlug}
                 focusSlug={focusSlug}
                 onSelect={selectFromMap}
-                onHover={setActiveSlug}
+                onHover={setHoverSlug}
               />
             </div>
           ) : null}
@@ -228,7 +232,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                   <div className="pr-1 max-h-[625px] overflow-y-auto">
                     <RankedTable
                       cafes={[...rankedInView, ...fewInView]}
-                      activeSlug={activeSlug}
+                      activeSlug={highlightSlug}
                       onFocusCafe={focusCafe}
                     />
                   </div>
@@ -241,7 +245,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                     <CafeCard
                       key={cafe.slug}
                       cafe={cafe}
-                      selected={activeSlug === cafe.slug}
+                      selected={highlightSlug === cafe.slug}
                       onHover={() => focusCafe(cafe.slug)}
                       onSelect={() => focusCafe(cafe.slug)}
                     />
@@ -265,7 +269,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                     <div className="pr-1 max-h-[625px] overflow-y-auto">
                       <RankedTable
                         cafes={unratedShown}
-                        activeSlug={activeSlug}
+                        activeSlug={highlightSlug}
                         onFocusCafe={focusCafe}
                       />
                     </div>
@@ -276,7 +280,7 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                     <CafeCard
                       key={cafe.slug}
                       cafe={cafe}
-                      selected={activeSlug === cafe.slug}
+                      selected={highlightSlug === cafe.slug}
                       onHover={() => focusCafe(cafe.slug)}
                       onSelect={() => focusCafe(cafe.slug)}
                     />
@@ -296,9 +300,10 @@ export function ExploreView({ cafes }: { cafes: readonly CafeSummary[] }) {
                   heightClass="h-[860px]"
                   onVisibleChange={setVisibleSlugs}
                   locateTarget={locateTarget}
+                  selectedSlug={highlightSlug}
                   focusSlug={focusSlug}
                   onSelect={selectFromMap}
-                  onHover={setActiveSlug}
+                  onHover={setHoverSlug}
                 />
               )}
               <span className="bottom-2 left-2 absolute bg-surface px-2 py-1 border border-border rounded-lg font-medium text-xs pointer-events-none">

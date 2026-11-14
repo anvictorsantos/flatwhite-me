@@ -9,6 +9,7 @@ export function MapPreview({
   onVisibleChange,
   heightClass,
   locateTarget = null,
+  selectedSlug,
   focusSlug,
   onSelect,
   onHover,
@@ -17,6 +18,7 @@ export function MapPreview({
   onVisibleChange?: (slugs: string[]) => void
   heightClass?: string
   locateTarget?: { lon: number; lat: number } | null
+  selectedSlug?: string | null
   focusSlug?: string | null
   onSelect?: (slug: string) => void
   onHover?: (slug: string | null) => void
@@ -27,6 +29,7 @@ export function MapPreview({
     <MapCanvas
       cafes={cafes}
       savedSlugs={saved}
+      selectedSlug={selectedSlug ?? undefined}
       focusSlug={focusSlug}
       onSelect={onSelect ?? (() => undefined)}
       onHover={onHover}
