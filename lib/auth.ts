@@ -1,6 +1,7 @@
 import { createHmac, randomBytes } from 'node:crypto'
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/db'
+import { effectiveRole } from '@/lib/roles'
 
 export const SESSION_COOKIE = 'fw_session'
 export const OAUTH_STATE_COOKIE = 'fw_oauth_state'
@@ -90,7 +91,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
     email: user.email,
     displayName: user.displayName,
     nickname: user.nickname,
-    role: user.role,
+    role: effectiveRole(user.role, user.email, adminEmails()),
   }
 }
 
