@@ -32,11 +32,6 @@ export function adminEmails(): string[] {
     .filter(Boolean)
 }
 
-export function safeNextPath(value: string | null): string {
-  if (!value || !value.startsWith('/') || value.startsWith('//') || value.includes('\\')) return '/'
-  return value
-}
-
 export function googleRedirectUri(origin: string): string {
   return process.env.GOOGLE_REDIRECT_URI?.trim() || new URL('/auth/callback', origin).toString()
 }

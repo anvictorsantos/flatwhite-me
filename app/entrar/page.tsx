@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { AppBar } from '@/components/AppBar'
-import { getSessionUser, safeNextPath } from '@/lib/auth'
+import { getSessionUser } from '@/lib/auth'
+import { safeNextPath } from '@/lib/next-path'
 
 const ERRORS: Record<string, string> = {
   config: 'A autenticação Google não está configurada neste ambiente.',
