@@ -8,7 +8,7 @@ export function MapPreview({
   cafes,
   onVisibleChange,
   heightClass,
-  locateNonce = 0,
+  locateTarget = null,
   focusSlug,
   onSelect,
   onHover,
@@ -16,7 +16,7 @@ export function MapPreview({
   cafes: readonly CafeSummary[]
   onVisibleChange?: (slugs: string[]) => void
   heightClass?: string
-  locateNonce?: number
+  locateTarget?: { lon: number; lat: number } | null
   focusSlug?: string | null
   onSelect?: (slug: string) => void
   onHover?: (slug: string | null) => void
@@ -31,8 +31,7 @@ export function MapPreview({
       onSelect={onSelect ?? (() => undefined)}
       onHover={onHover}
       onVisibleChange={onVisibleChange ?? (() => undefined)}
-      locateNonce={locateNonce}
-      onLocateError={() => undefined}
+      locateTarget={locateTarget}
       heightClass={heightClass}
     />
   )
