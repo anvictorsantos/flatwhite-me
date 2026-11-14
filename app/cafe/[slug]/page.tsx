@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { cache } from 'react'
+import { headers } from 'next/headers'
 import { AppBar } from '@/components/AppBar'
 import { CafeActions } from '@/components/CafeActions'
 import { ReportNote } from '@/components/ReportNote'
@@ -64,6 +65,7 @@ export default async function CafePage({ params }: Params) {
   const cafe = await getCafe(slug)
   if (!cafe) notFound()
 
+  const nonce = (await headers()).get('x-nonce') ?? undefined
   const status = statusLabel(cafe.ratings)
   const rated = cafe.score !== null && cafe.dims !== null
   const notes = await prisma.rating.findMany({
@@ -109,6 +111,7 @@ export default async function CafePage({ params }: Params) {
       <main className="px-4 py-6 sm:px-6">
         {jsonLd ? (
           <script
+            nonce={nonce}
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),

@@ -2,6 +2,8 @@ import { AppBar } from '@/components/AppBar'
 import { DeleteAccount } from '@/components/DeleteAccount'
 import { getSessionUser } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 export default async function PrivacidadePage() {
   const user = await getSessionUser()
 

@@ -3,6 +3,8 @@ import { AppBar } from '@/components/AppBar'
 import { getSessionUser } from '@/lib/auth'
 import { safeNextPath } from '@/lib/next-path'
 
+export const dynamic = 'force-dynamic'
+
 const ERRORS: Record<string, string> = {
   config: 'A autenticação Google não está configurada neste ambiente.',
   state: 'A sessão de entrada expirou. Tenta outra vez.',

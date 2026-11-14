@@ -3,6 +3,8 @@ import { AppBar } from '@/components/AppBar'
 import { NicknameForm } from '@/components/NicknameForm'
 import { getSessionUser } from '@/lib/auth'
 
+export const dynamic = 'force-dynamic'
+
 const PAGES = [
   { href: '/como-funciona', title: 'Como funciona', note: 'A fórmula e os pesos' },
   { href: '/privacidade', title: 'Privacidade', note: 'O que fica público e privado' },
