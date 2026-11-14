@@ -17,6 +17,7 @@ const tokenSchema = z.object({
 const profileSchema = z.object({
   sub: z.string().min(1),
   email: z.string().email(),
+  email_verified: z.boolean(),
   name: z.string().min(1).optional(),
   picture: z.string().url().optional(),
 })
@@ -64,6 +65,9 @@ export async function GET(request: Request) {
 
   const profile = profileSchema.safeParse(await profileResponse.json())
   if (!profile.success) return fail('profile')
+
+  // ADMIN_EMAILS decisions trust this address, so it must be one Google has verified.
+  if (!profile.data.email_verified) return fail('profile')
 
   const email = profile.data.email.toLowerCase()
   const role = adminEmails().includes(email) ? 'admin' : 'user'
