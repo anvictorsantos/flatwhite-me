@@ -47,7 +47,7 @@
     "eslint": "^10.14.0",
     "eslint-config-next": "^16.4.6",
     "lighthouse": "^13.6.0",
-    "playwright": "^1.65.0",
+    "playwright": "^1.65.1",
     "prettier": "^3.10.0",
     "tailwindcss": "^4.3.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
